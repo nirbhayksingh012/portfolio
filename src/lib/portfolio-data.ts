@@ -5,13 +5,14 @@ import {
 
 export const profile = {
   name: "Nirbhay Singh",
-  roles: ["AI Engineer", "Software Engineer", "Generative AI Developer"],
+  roles: ["AI Engineer", "Software Engineer", "Generative AI Developer" , "ML Engineer"],
   tagline:
     "Building scalable AI-powered applications, RAG pipelines, LLM systems, and modern web experiences.",
-  email: "nirbhaysingh@example.com",
-  github: "https://github.com/nirbhaysingh",
-  linkedin: "https://linkedin.com/in/nirbhaysingh",
-  location: "Jamshedpur, India",
+  email: "nirbhayksingh14@gmail.com",
+  github: "https://github.com/nirbhayksingh012",
+  linkedin: "https://www.linkedin.com/in/nirbhay-singh-5229542b2",
+  location: "Jamshedpur, Jharkhand, India",
+  avatar: "/images/profile.jpg",
 };
 
 export const experiences = [
@@ -51,7 +52,7 @@ export const projects = [
       { label: "Memory", value: "Multi-turn" },
     ],
     demo: "#",
-    github: "https://github.com/nirbhaysingh",
+    github: "https://github.com/nirbhayksingh012/RAG_application.git",
     accent: "from-ai-violet to-ai-cyan",
   },
   {
@@ -65,7 +66,7 @@ export const projects = [
       { label: "Latency", value: "Realtime" },
     ],
     demo: "#",
-    github: "https://github.com/nirbhaysingh",
+    github: "https://github.com/nirbhayksingh012/Stock-Sentiment-Analyzer.git",
     accent: "from-ai-cyan to-ai-emerald",
   },
   {
@@ -79,7 +80,7 @@ export const projects = [
       { label: "Ranking", value: "Cosine" },
     ],
     demo: "#",
-    github: "https://github.com/nirbhaysingh",
+    github: "https://github.com/nirbhayksingh012/Movie_recommendations.git",
     accent: "from-ai-pink to-ai-violet",
   },
 ];
