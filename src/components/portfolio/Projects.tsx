@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ArrowUpRight, Github } from "lucide-react";
+import { Github } from "lucide-react";
 import { SectionHeader } from "./SectionHeader";
 import { projects } from "@/lib/portfolio-data";
 
@@ -51,20 +51,14 @@ export function Projects() {
                 ))}
               </div>
 
-              <div className="mt-6 flex items-center gap-2">
-                <a
-                  href={p.demo}
-                  className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-foreground px-3 py-2 text-xs font-medium text-background transition-opacity hover:opacity-90"
-                >
-                  Live Demo <ArrowUpRight className="h-3.5 w-3.5" />
-                </a>
+              <div className="mt-6">
                 <a
                   href={p.github}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-border bg-card px-3 py-2 text-xs font-medium transition-colors hover:bg-accent"
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-border bg-card px-3 py-2.5 text-xs font-medium transition-colors hover:bg-accent hover:border-ai-violet/40"
                 >
-                  <Github className="h-3.5 w-3.5" /> Code
+                  <Github className="h-3.5 w-3.5" /> View on GitHub
                 </a>
               </div>
             </motion.article>

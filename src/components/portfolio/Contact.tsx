@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { useState } from "react";
-import { Github, Linkedin, Mail, MapPin, Send } from "lucide-react";
+import { Github, Linkedin, Mail, MapPin, Send, Sparkles } from "lucide-react";
 import { z } from "zod";
 import { toast } from "sonner";
 import { SectionHeader } from "./SectionHeader";
@@ -17,7 +17,7 @@ const schema = z.object({
 export function Contact() {
   const [loading, setLoading] = useState(false);
 
-  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const fd = new FormData(e.currentTarget);
     const parsed = schema.safeParse({
@@ -30,11 +30,25 @@ export function Contact() {
       return;
     }
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(parsed.data),
+      });
+      const result = await response.json();
+      if (!response.ok) {
+        toast.error(result.error || "Failed to send message");
+        return;
+      }
       toast.success("Message sent — I'll get back to you shortly.");
       (e.target as HTMLFormElement).reset();
-    }, 900);
+    } catch (error) {
+      toast.error("Failed to send message. Please try again.");
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -47,37 +61,76 @@ export function Contact() {
         />
 
         <div className="grid gap-6 lg:grid-cols-5">
+
+          {/* ── LEFT: Personal CTA card ── */}
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-60px" }}
             transition={{ duration: 0.5 }}
-            className="glass rounded-3xl p-7 lg:col-span-2"
+            className="relative overflow-hidden glass rounded-3xl p-7 lg:col-span-2 flex flex-col justify-between min-h-[360px]"
           >
-            <h3 className="font-display text-lg font-semibold">Get in touch</h3>
-            <p className="mt-2 text-sm text-muted-foreground">
-              Prefer email? Reach me directly — I usually reply within a day.
-            </p>
-            <ul className="mt-6 space-y-3 text-sm">
-              <li className="flex items-center gap-3">
-                <span className="grid h-9 w-9 place-items-center rounded-lg border border-border bg-card text-ai-cyan"><Mail className="h-4 w-4" /></span>
-                <a href={`mailto:${profile.email}`} className="hover:text-foreground">{profile.email}</a>
-              </li>
-              <li className="flex items-center gap-3">
-                <span className="grid h-9 w-9 place-items-center rounded-lg border border-border bg-card text-ai-violet"><Github className="h-4 w-4" /></span>
-                <a href={profile.github} target="_blank" rel="noreferrer" className="hover:text-foreground">github.com/nirbhaysingh</a>
-              </li>
-              <li className="flex items-center gap-3">
-                <span className="grid h-9 w-9 place-items-center rounded-lg border border-border bg-card text-ai-pink"><Linkedin className="h-4 w-4" /></span>
-                <a href={profile.linkedin} target="_blank" rel="noreferrer" className="hover:text-foreground">linkedin.com/in/nirbhaysingh</a>
-              </li>
-              <li className="flex items-center gap-3">
-                <span className="grid h-9 w-9 place-items-center rounded-lg border border-border bg-card text-ai-emerald"><MapPin className="h-4 w-4" /></span>
-                <span className="text-muted-foreground">{profile.location}</span>
-              </li>
-            </ul>
+            {/* Background decorative gradient blobs */}
+            <div className="pointer-events-none absolute -top-10 -left-10 h-48 w-48 rounded-full bg-ai-violet/20 blur-3xl" />
+            <div className="pointer-events-none absolute -bottom-10 -right-10 h-48 w-48 rounded-full bg-ai-cyan/15 blur-3xl" />
+
+            {/* Top: Big quote / headline */}
+            <div className="relative">
+              <div className="mb-4 inline-flex items-center gap-1.5 rounded-full border border-ai-violet/30 bg-ai-violet/10 px-3 py-1 text-xs font-medium text-ai-violet">
+                <Sparkles className="h-3 w-3" /> Open to work
+              </div>
+              <h3 className="font-display text-2xl font-semibold leading-snug">
+                Have an idea?<br />
+                <span className="text-gradient">Let's make it real.</span>
+              </h3>
+              <p className="mt-3 text-sm text-muted-foreground leading-relaxed">
+                Whether it's a startup, a side project, or a full-time role — I'd love to hear what you're building and how I can help.
+              </p>
+            </div>
+
+            {/* Middle: quick social pills */}
+            <div className="relative mt-6 flex flex-wrap gap-2">
+              <a
+                href={`mailto:${profile.email}`}
+                className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card/60 px-3 py-1.5 text-xs font-medium text-muted-foreground backdrop-blur transition-all hover:border-ai-cyan/50 hover:text-ai-cyan"
+              >
+                <Mail className="h-3.5 w-3.5" /> Email
+              </a>
+              <a
+                href={profile.github}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card/60 px-3 py-1.5 text-xs font-medium text-muted-foreground backdrop-blur transition-all hover:border-ai-violet/50 hover:text-ai-violet"
+              >
+                <Github className="h-3.5 w-3.5" /> GitHub
+              </a>
+              <a
+                href={profile.linkedin}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card/60 px-3 py-1.5 text-xs font-medium text-muted-foreground backdrop-blur transition-all hover:border-ai-pink/50 hover:text-ai-pink"
+              >
+                <Linkedin className="h-3.5 w-3.5" /> LinkedIn
+              </a>
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card/60 px-3 py-1.5 text-xs font-medium text-muted-foreground">
+                <MapPin className="h-3.5 w-3.5 text-ai-emerald" /> {profile.location}
+              </span>
+            </div>
+
+            {/* Bottom: response badge */}
+            <div className="relative mt-6 flex items-center gap-2.5 rounded-2xl border border-border bg-card/40 px-4 py-3">
+              <span className="relative flex h-2.5 w-2.5 shrink-0">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-ai-emerald opacity-70" />
+                <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-ai-emerald" />
+              </span>
+              <p className="text-xs text-muted-foreground">
+                Usually replies within{" "}
+                <span className="font-semibold text-foreground">24 hours</span>
+              </p>
+            </div>
           </motion.div>
 
+          {/* ── RIGHT: Form ── */}
           <motion.form
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -94,7 +147,7 @@ export function Contact() {
                   required
                   maxLength={80}
                   className="w-full rounded-xl border border-border bg-background/60 px-3.5 py-2.5 text-sm outline-none transition-colors focus:border-ai-violet/60 focus:ring-2 focus:ring-ai-violet/20"
-                  placeholder="Jane Doe"
+                  placeholder="nirbhay singh"
                 />
               </label>
               <label className="block">
