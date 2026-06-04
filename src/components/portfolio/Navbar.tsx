@@ -38,7 +38,7 @@ export function Navbar() {
         )}
       >
         <a href="#top" className="group flex items-center gap-2 font-display text-sm font-semibold">
-          <span className="relative grid h-8 w-8 place-items-center rounded-xl bg-gradient-to-br from-ai-violet to-ai-cyan text-white shadow-lg shadow-ai-violet/30">
+          <span className="relative grid h-8 w-8 place-items-center rounded-xl bg-foreground text-background shadow-lg shadow-foreground/30 group-hover:scale-110 transition-transform">
             <Sparkles className="h-4 w-4" />
           </span>
           <span className="hidden sm:inline">Nirbhay<span className="text-gradient">.dev</span></span>
@@ -48,9 +48,10 @@ export function Navbar() {
             <li key={l.href}>
               <a
                 href={l.href}
-                className="rounded-lg px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+                className="group relative rounded-lg px-3 py-1.5 text-sm text-muted-foreground transition-all hover:text-foreground overflow-hidden"
               >
-                {l.label}
+                <span className="relative z-10">{l.label}</span>
+                <span className="absolute bottom-0 left-0 h-0.5 w-0 bg-foreground transition-all duration-300 group-hover:w-full" />
               </a>
             </li>
           ))}
@@ -58,7 +59,7 @@ export function Navbar() {
         <button
           onClick={toggle}
           aria-label="Toggle theme"
-          className="grid h-9 w-9 place-items-center rounded-xl border border-border bg-card/60 text-foreground transition-colors hover:bg-accent"
+          className="grid h-9 w-9 place-items-center rounded-xl border-2 border-foreground bg-background text-foreground transition-all hover:bg-foreground hover:text-background hover:scale-110"
         >
           {mounted && (resolvedTheme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />)}
         </button>

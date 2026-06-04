@@ -24,11 +24,11 @@ export function Skills() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-80px" }}
                 transition={{ duration: 0.5, delay: idx * 0.05 }}
-                className="group relative overflow-hidden rounded-2xl border border-border bg-card/60 p-6 backdrop-blur transition-all hover:-translate-y-0.5 hover:border-ai-cyan/40"
+                className="group relative overflow-hidden rounded-2xl border-2 border-foreground bg-background p-6 backdrop-blur transition-all hover:scale-105 hover:shadow-lg"
               >
-                <div className="pointer-events-none absolute -right-12 -top-12 h-32 w-32 rounded-full bg-ai-cyan opacity-0 blur-2xl transition-opacity duration-500 group-hover:opacity-20" />
+                <div className="pointer-events-none absolute -right-12 -top-12 h-32 w-32 rounded-full bg-foreground opacity-0 blur-2xl transition-opacity duration-500 group-hover:opacity-10" />
                 <div className="mb-4 flex items-center gap-3">
-                  <span className="grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br from-ai-violet/20 to-ai-cyan/20 text-ai-cyan">
+                  <span className="grid h-10 w-10 place-items-center rounded-xl bg-foreground text-background">
                     <Icon className="h-5 w-5" />
                   </span>
                   <h3 className="font-display text-lg font-semibold">{g.label}</h3>
@@ -37,7 +37,7 @@ export function Skills() {
                   {g.items.map((it) => (
                     <span
                       key={it}
-                      className="rounded-md border border-border bg-background/50 px-2.5 py-1 text-xs font-medium text-foreground/80 transition-colors hover:border-ai-violet/40 hover:text-foreground"
+                      className="rounded-md border border-foreground bg-background px-2.5 py-1 text-xs font-medium text-foreground transition-all hover:bg-foreground hover:text-background"
                     >
                       {it}
                     </span>

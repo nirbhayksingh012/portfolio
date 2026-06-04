@@ -16,7 +16,7 @@ export function Experience() {
         />
 
         <div className="relative">
-          <div className="absolute left-4 top-2 bottom-2 w-px bg-gradient-to-b from-ai-violet via-ai-cyan to-transparent md:left-1/2" />
+          <div className="absolute left-4 top-2 bottom-2 w-0.5 bg-foreground md:left-1/2 md:bg-foreground" />
 
           <div className="space-y-10">
             {experiences.map((exp, idx) => (
@@ -31,19 +31,19 @@ export function Experience() {
                 }`}
               >
                 <div className="relative pl-12 md:pl-0 md:[direction:ltr] md:px-2">
-                  <span className="absolute left-0 top-1.5 grid h-8 w-8 place-items-center rounded-full border border-border bg-card shadow-lg md:left-1/2 md:-translate-x-1/2">
-                    <span className="h-2.5 w-2.5 rounded-full bg-gradient-to-br from-ai-violet to-ai-cyan" />
+                  <span className="absolute left-0 top-1.5 grid h-8 w-8 place-items-center rounded-full border-2 border-foreground bg-background shadow-lg md:left-1/2 md:-translate-x-1/2">
+                    <span className="h-2.5 w-2.5 rounded-full bg-foreground animate-pulse" />
                   </span>
-                  <div className="glass rounded-2xl p-6">
-                    <div className="mb-2 flex items-center gap-2 text-xs uppercase tracking-wider text-muted-foreground">
+                  <div className="glass rounded-2xl p-6 border-2 border-foreground">
+                    <div className="mb-2 flex items-center gap-2 text-xs uppercase tracking-wider text-foreground font-semibold">
                       <Briefcase className="h-3.5 w-3.5" /> {exp.period}
                     </div>
                     <h3 className="font-display text-xl font-semibold">{exp.role}</h3>
-                    <p className="text-sm text-gradient font-medium">{exp.company}</p>
+                    <p className="text-sm text-foreground font-medium">{exp.company}</p>
                     <ul className="mt-4 space-y-2">
                       {exp.highlights.map((h) => (
                         <li key={h} className="flex gap-2 text-sm text-muted-foreground">
-                          <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-ai-cyan" />
+                          <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-foreground" />
                           {h}
                         </li>
                       ))}

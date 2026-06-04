@@ -23,13 +23,13 @@ export function Certifications() {
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true, margin: "-60px" }}
                 transition={{ duration: 0.45, delay: idx * 0.04 }}
-                className="group relative flex h-full flex-col gap-3 rounded-2xl border border-border bg-card/60 p-5 backdrop-blur transition-all hover:-translate-y-0.5 hover:border-ai-violet/40"
+                className="group relative flex h-full flex-col gap-3 rounded-2xl border-2 border-foreground bg-background p-5 backdrop-blur transition-all hover:scale-105 hover:shadow-lg"
               >
                 <div className="flex items-center justify-between">
-                  <span className="grid h-9 w-9 place-items-center rounded-lg bg-gradient-to-br from-ai-violet/20 to-ai-cyan/20 text-ai-violet">
+                  <span className="grid h-9 w-9 place-items-center rounded-lg bg-foreground text-background">
                     <Icon className="h-4 w-4" />
                   </span>
-                  <Award className="h-4 w-4 text-muted-foreground/60" />
+                  <Award className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
                 </div>
                 <h3 className="text-sm font-semibold leading-snug">{c.name}</h3>
                 <p className="mt-auto text-xs uppercase tracking-wider text-muted-foreground">{c.issuer}</p>

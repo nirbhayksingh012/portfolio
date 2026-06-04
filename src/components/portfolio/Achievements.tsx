@@ -18,7 +18,7 @@ function Counter({ to, suffix }: { to: number; suffix: string }) {
   }, [inView, to, mv]);
 
   return (
-    <span ref={ref} className="font-display text-4xl font-semibold text-gradient sm:text-5xl">
+    <span ref={ref} className="font-display text-4xl font-semibold sm:text-5xl">
       <motion.span>{rounded}</motion.span>
       {suffix}
     </span>
@@ -30,7 +30,7 @@ export function Achievements() {
     <section className="relative py-24">
       <div className="mx-auto max-w-6xl px-6">
         <SectionHeader eyebrow="Achievements" title="Numbers that ship" />
-        <div className="glass grid grid-cols-2 gap-6 rounded-3xl p-8 sm:grid-cols-3 lg:grid-cols-5">
+        <div className="glass grid grid-cols-2 gap-6 rounded-3xl p-8 sm:grid-cols-3 lg:grid-cols-5 border-2 border-foreground">
           {achievements.map((a, idx) => (
             <motion.div
               key={a.label}

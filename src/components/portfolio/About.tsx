@@ -20,9 +20,9 @@ export function About() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-80px" }}
             transition={{ duration: 0.6 }}
-            className="glass relative overflow-hidden rounded-3xl p-8 lg:col-span-3"
+            className="glass relative overflow-hidden rounded-3xl p-8 lg:col-span-3 border-2 border-foreground"
           >
-            <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-ai-violet opacity-20 blur-3xl" />
+            <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-foreground opacity-5 blur-3xl" />
             <p className="text-lg leading-relaxed text-foreground/90">
               I'm a software engineer focused on the GenAI stack: retrieval-augmented generation,
               LLM evaluation, agentic workflows, and the production plumbing that makes them
@@ -36,17 +36,17 @@ export function About() {
             </p>
             <div className="mt-8 flex items-center gap-6">
               <div>
-                <div className="font-display text-3xl font-semibold text-gradient">2+</div>
+                <div className="font-display text-3xl font-semibold">2+</div>
                 <div className="text-xs uppercase tracking-wider text-muted-foreground">Years building</div>
               </div>
-              <div className="h-10 w-px bg-border" />
+              <div className="h-10 w-px bg-foreground opacity-30" />
               <div>
-                <div className="font-display text-3xl font-semibold text-gradient">10+</div>
+                <div className="font-display text-3xl font-semibold">10+</div>
                 <div className="text-xs uppercase tracking-wider text-muted-foreground">Projects shipped</div>
               </div>
-              <div className="h-10 w-px bg-border" />
+              <div className="h-10 w-px bg-foreground opacity-30" />
               <div>
-                <div className="font-display text-3xl font-semibold text-gradient">8</div>
+                <div className="font-display text-3xl font-semibold">8</div>
                 <div className="text-xs uppercase tracking-wider text-muted-foreground">Certifications</div>
               </div>
             </div>
@@ -57,16 +57,16 @@ export function About() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-80px" }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="glass rounded-3xl p-6 lg:col-span-2"
+            className="glass rounded-3xl p-6 lg:col-span-2 border-2 border-foreground"
           >
-            <div className="mb-4 text-xs uppercase tracking-[0.18em] text-muted-foreground">Focus areas</div>
+            <div className="mb-4 text-xs uppercase tracking-[0.18em] text-foreground font-semibold">Focus areas</div>
             <ul className="grid grid-cols-2 gap-2">
               {focus.map(({ icon: Icon, label }) => (
                 <li
                   key={label}
-                  className="group flex items-center gap-2 rounded-xl border border-border bg-card/50 px-3 py-2.5 text-sm transition-all hover:border-ai-violet/40 hover:bg-accent"
+                  className="group flex items-center gap-2 rounded-xl border-2 border-foreground bg-background px-3 py-2.5 text-sm transition-all hover:bg-foreground hover:text-background"
                 >
-                  <Icon className="h-4 w-4 text-ai-cyan transition-transform group-hover:scale-110" />
+                  <Icon className="h-4 w-4 transition-transform group-hover:scale-110" />
                   <span className="font-medium">{label}</span>
                 </li>
               ))}

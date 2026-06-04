@@ -68,15 +68,15 @@ export function Contact() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-60px" }}
             transition={{ duration: 0.5 }}
-            className="relative overflow-hidden glass rounded-3xl p-7 lg:col-span-2 flex flex-col justify-between min-h-[360px]"
+            className="relative overflow-hidden glass rounded-3xl p-7 lg:col-span-2 flex flex-col justify-between min-h-[360px] border-2 border-foreground"
           >
-            {/* Background decorative gradient blobs */}
-            <div className="pointer-events-none absolute -top-10 -left-10 h-48 w-48 rounded-full bg-ai-violet/20 blur-3xl" />
-            <div className="pointer-events-none absolute -bottom-10 -right-10 h-48 w-48 rounded-full bg-ai-cyan/15 blur-3xl" />
+            {/* Background decorative geometric shapes */}
+            <div className="pointer-events-none absolute -top-10 -left-10 h-48 w-48 rounded-full bg-foreground opacity-5 blur-3xl" />
+            <div className="pointer-events-none absolute -bottom-10 -right-10 h-48 w-48 rounded-full bg-foreground opacity-5 blur-3xl" />
 
             {/* Top: Big quote / headline */}
             <div className="relative">
-              <div className="mb-4 inline-flex items-center gap-1.5 rounded-full border border-ai-violet/30 bg-ai-violet/10 px-3 py-1 text-xs font-medium text-ai-violet">
+              <div className="mb-4 inline-flex items-center gap-1.5 rounded-full border-2 border-foreground bg-background px-3 py-1 text-xs font-medium text-foreground">
                 <Sparkles className="h-3 w-3" /> Open to work
               </div>
               <h3 className="font-display text-2xl font-semibold leading-snug">
@@ -92,7 +92,7 @@ export function Contact() {
             <div className="relative mt-6 flex flex-wrap gap-2">
               <a
                 href={`mailto:${profile.email}`}
-                className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card/60 px-3 py-1.5 text-xs font-medium text-muted-foreground backdrop-blur transition-all hover:border-ai-cyan/50 hover:text-ai-cyan"
+                className="inline-flex items-center gap-1.5 rounded-full border-2 border-foreground bg-background px-3 py-1.5 text-xs font-medium text-foreground backdrop-blur transition-all hover:bg-foreground hover:text-background"
               >
                 <Mail className="h-3.5 w-3.5" /> Email
               </a>
@@ -100,7 +100,7 @@ export function Contact() {
                 href={profile.github}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card/60 px-3 py-1.5 text-xs font-medium text-muted-foreground backdrop-blur transition-all hover:border-ai-violet/50 hover:text-ai-violet"
+                className="inline-flex items-center gap-1.5 rounded-full border-2 border-foreground bg-background px-3 py-1.5 text-xs font-medium text-foreground backdrop-blur transition-all hover:bg-foreground hover:text-background"
               >
                 <Github className="h-3.5 w-3.5" /> GitHub
               </a>
@@ -108,20 +108,20 @@ export function Contact() {
                 href={profile.linkedin}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card/60 px-3 py-1.5 text-xs font-medium text-muted-foreground backdrop-blur transition-all hover:border-ai-pink/50 hover:text-ai-pink"
+                className="inline-flex items-center gap-1.5 rounded-full border-2 border-foreground bg-background px-3 py-1.5 text-xs font-medium text-foreground backdrop-blur transition-all hover:bg-foreground hover:text-background"
               >
                 <Linkedin className="h-3.5 w-3.5" /> LinkedIn
               </a>
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card/60 px-3 py-1.5 text-xs font-medium text-muted-foreground">
-                <MapPin className="h-3.5 w-3.5 text-ai-emerald" /> {profile.location}
+              <span className="inline-flex items-center gap-1.5 rounded-full border-2 border-foreground bg-background px-3 py-1.5 text-xs font-medium text-foreground">
+                <MapPin className="h-3.5 w-3.5" /> {profile.location}
               </span>
             </div>
 
             {/* Bottom: response badge */}
-            <div className="relative mt-6 flex items-center gap-2.5 rounded-2xl border border-border bg-card/40 px-4 py-3">
+            <div className="relative mt-6 flex items-center gap-2.5 rounded-2xl border-2 border-foreground bg-background px-4 py-3">
               <span className="relative flex h-2.5 w-2.5 shrink-0">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-ai-emerald opacity-70" />
-                <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-ai-emerald" />
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-foreground opacity-70" />
+                <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-foreground" />
               </span>
               <p className="text-xs text-muted-foreground">
                 Usually replies within{" "}
@@ -137,46 +137,46 @@ export function Contact() {
             viewport={{ once: true, margin: "-60px" }}
             transition={{ duration: 0.5, delay: 0.1 }}
             onSubmit={onSubmit}
-            className="glass space-y-4 rounded-3xl p-7 lg:col-span-3"
+            className="glass space-y-4 rounded-3xl p-7 lg:col-span-3 border-2 border-foreground"
           >
             <div className="grid gap-4 sm:grid-cols-2">
               <label className="block">
-                <span className="mb-1.5 block text-xs font-medium uppercase tracking-wider text-muted-foreground">Name</span>
+                <span className="mb-1.5 block text-xs font-medium uppercase tracking-wider text-foreground font-semibold">Name</span>
                 <input
                   name="name"
                   required
                   maxLength={80}
-                  className="w-full rounded-xl border border-border bg-background/60 px-3.5 py-2.5 text-sm outline-none transition-colors focus:border-ai-violet/60 focus:ring-2 focus:ring-ai-violet/20"
+                  className="w-full rounded-xl border-2 border-foreground bg-background px-3.5 py-2.5 text-sm outline-none transition-colors focus:ring-2 focus:ring-foreground/30"
                   placeholder="nirbhay singh"
                 />
               </label>
               <label className="block">
-                <span className="mb-1.5 block text-xs font-medium uppercase tracking-wider text-muted-foreground">Email</span>
+                <span className="mb-1.5 block text-xs font-medium uppercase tracking-wider text-foreground font-semibold">Email</span>
                 <input
                   name="email"
                   type="email"
                   required
                   maxLength={160}
-                  className="w-full rounded-xl border border-border bg-background/60 px-3.5 py-2.5 text-sm outline-none transition-colors focus:border-ai-violet/60 focus:ring-2 focus:ring-ai-violet/20"
+                  className="w-full rounded-xl border-2 border-foreground bg-background px-3.5 py-2.5 text-sm outline-none transition-colors focus:ring-2 focus:ring-foreground/30"
                   placeholder="you@company.com"
                 />
               </label>
             </div>
             <label className="block">
-              <span className="mb-1.5 block text-xs font-medium uppercase tracking-wider text-muted-foreground">Message</span>
+              <span className="mb-1.5 block text-xs font-medium uppercase tracking-wider text-foreground font-semibold">Message</span>
               <textarea
                 name="message"
                 required
                 rows={5}
                 maxLength={1000}
-                className="w-full resize-none rounded-xl border border-border bg-background/60 px-3.5 py-2.5 text-sm outline-none transition-colors focus:border-ai-violet/60 focus:ring-2 focus:ring-ai-violet/20"
+                className="w-full resize-none rounded-xl border-2 border-foreground bg-background px-3.5 py-2.5 text-sm outline-none transition-colors focus:ring-2 focus:ring-foreground/30"
                 placeholder="Tell me about your project, role, or question…"
               />
             </label>
             <button
               type="submit"
               disabled={loading}
-              className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-ai-violet to-ai-cyan px-5 py-3 text-sm font-medium text-white shadow-lg shadow-ai-violet/30 transition-all hover:shadow-xl disabled:opacity-60 sm:w-auto"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-foreground px-5 py-3 text-sm font-medium text-background shadow-lg shadow-foreground/30 transition-all hover:shadow-xl hover:scale-105 disabled:opacity-60 sm:w-auto"
             >
               {loading ? "Sending…" : (<>Send Message <Send className="h-4 w-4" /></>)}
             </button>
