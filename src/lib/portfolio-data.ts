@@ -59,21 +59,6 @@ export const projects = [
     accent: "from-ai-emerald to-ai-cyan",
   },
   {
-    title: "AI PDF Chatbot",
-    blurb:
-      "Production RAG pipeline with semantic search, multi-turn memory, and sub-2s responses.",
-    image: "/images/projects/ai-pdf-chatbot.png",
-    tech: ["LangChain", "FAISS", "FastAPI", "Ollama", "AWS"],
-    metrics: [
-      { label: "Response time", value: "<2s" },
-      { label: "Token cost", value: "−40%" },
-      { label: "Memory", value: "Multi-turn" },
-    ],
-    demo: "#",
-    github: "https://github.com/nirbhayksingh012/RAG_application.git",
-    accent: "from-ai-violet to-ai-cyan",
-  },
-  {
     title: "AI Stock Sentiment Analyzer",
     blurb:
       "Real-time financial news pipeline with FinBERT scoring and LLM-generated executive summaries.",
@@ -102,6 +87,21 @@ export const projects = [
     demo: "#",
     github: "https://github.com/nirbhayksingh012/Movie_recommendations.git",
     accent: "from-ai-pink to-ai-violet",
+  },
+  {
+    title: "AI PDF Chatbot",
+    blurb:
+      "Production RAG pipeline with semantic search, multi-turn memory, and sub-2s responses.",
+    image: "/images/projects/ai-pdf-chatbot.png",
+    tech: ["LangChain", "FAISS", "FastAPI", "Ollama", "AWS"],
+    metrics: [
+      { label: "Response time", value: "<2s" },
+      { label: "Token cost", value: "−40%" },
+      { label: "Memory", value: "Multi-turn" },
+    ],
+    demo: "#",
+    github: "https://github.com/nirbhayksingh012/RAG_application.git",
+    accent: "from-ai-violet to-ai-cyan",
   },
 ];
 

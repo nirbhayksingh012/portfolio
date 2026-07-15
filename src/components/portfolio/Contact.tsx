@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { useState } from "react";
-import { Github, Linkedin, Mail, MapPin, Send, Sparkles, ArrowUpRight } from "lucide-react";
+import { Github, Linkedin, Mail, MapPin, Send, Sparkles, ArrowUpRight, type LucideIcon } from "lucide-react";
 import { z } from "zod";
 import { toast } from "sonner";
 import { SectionHeader } from "./SectionHeader";
@@ -24,7 +24,7 @@ function SocialPill({
   external = true,
 }: {
   href: string;
-  icon: React.ElementType;
+  icon: LucideIcon;
   label: string;
   color: string;
   external?: boolean;
