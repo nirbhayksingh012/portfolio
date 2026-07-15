@@ -2,75 +2,92 @@
 
 import { motion } from "framer-motion";
 import { SectionHeader } from "./SectionHeader";
-import { focus } from "@/lib/portfolio-data";
+import { profile, focus } from "@/lib/portfolio-data";
+import dynamic from "next/dynamic";
+
+const Lanyard = dynamic(() => import("./Lanyard"), { ssr: false });
+
+/* ── Main section ───────────────────────────────────────────── */
 
 export function About() {
   return (
     <section id="about" className="relative py-24">
-      <div className="mx-auto max-w-6xl px-6">
+      <div className="relative mx-auto max-w-5xl px-6">
         <SectionHeader
           eyebrow="About"
           title="Engineer obsessed with shipping intelligent systems"
           description="I design and build production-grade AI applications — from retrieval pipelines and LLM orchestration to the APIs and interfaces that bring them to users."
         />
 
-        <div className="grid gap-6 lg:grid-cols-5">
+        <div className="relative mt-8 grid gap-12 lg:grid-cols-[1fr_380px] lg:items-start">
+          {/* ── Left: Content ── */}
           <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-80px" }}
-            transition={{ duration: 0.6 }}
-            className="glass relative overflow-hidden rounded-3xl p-8 lg:col-span-3 border-2 border-foreground"
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: "-60px" }}
+            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           >
-            <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-foreground opacity-5 blur-3xl" />
-            <p className="text-lg leading-relaxed text-foreground/90">
-              I'm a software engineer focused on the GenAI stack: retrieval-augmented generation,
-              LLM evaluation, agentic workflows, and the production plumbing that makes them
-              reliable. I love taking research-grade ideas and turning them into responsive,
-              cost-efficient products.
+            {/* Bio text */}
+            <p className="font-display text-2xl leading-snug text-white sm:text-3xl">
+              I&apos;m a software engineer focused on the{" "}
+              <span className="text-gradient">GenAI stack</span>: LLM
+              architecture, RAG pipelines, sentiment analysis systems, and the
+              full-stack plumbing that makes them production-ready.
             </p>
-            <p className="mt-4 leading-relaxed text-muted-foreground">
-              Recently I shipped a RAG pipeline that cut token costs by 40% while keeping
-              sub-2-second responses, and an NLP system processing 500+ financial news articles
-              per day at 82% sentiment accuracy.
+
+            <p className="mt-6 text-base leading-relaxed text-slate-500">
+              I love taking research-grade ideas into production. I trained
+              Rudra, a custom 6.5M-parameter Transformer LLM with autonomous
+              tool-use, on a single consumer GPU. At TATA BlueScope Steel, I
+              built a FinBERT-powered sentiment pipeline processing 500+
+              financial articles daily at ~82% accuracy — cutting manual
+              analyst effort by 60%.
             </p>
-            <div className="mt-8 flex items-center gap-6">
-              <div>
-                <div className="font-display text-3xl font-semibold">2+</div>
-                <div className="text-xs uppercase tracking-wider text-muted-foreground">Years building</div>
+
+            {/* Focus areas */}
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-40px" }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              className="mt-10"
+            >
+              <h4 className="mb-4 text-xs font-semibold uppercase tracking-[0.18em] text-slate-600">
+                What I focus on
+              </h4>
+              <div className="flex flex-wrap gap-2">
+                {focus.map((f) => {
+                  const Icon = f.icon;
+                  return (
+                    <span
+                      key={f.label}
+                      className="group inline-flex items-center gap-2 rounded-lg border border-white/[0.06] bg-white/[0.02] px-3 py-2 text-xs font-medium text-slate-500 transition-all duration-300 hover:border-white/[0.12] hover:bg-white/[0.06] hover:text-white"
+                    >
+                      <Icon className="h-3.5 w-3.5 text-amber-400/70 transition-colors duration-300 group-hover:text-amber-400" />
+                      {f.label}
+                    </span>
+                  );
+                })}
               </div>
-              <div className="h-10 w-px bg-foreground opacity-30" />
-              <div>
-                <div className="font-display text-3xl font-semibold">10+</div>
-                <div className="text-xs uppercase tracking-wider text-muted-foreground">Projects shipped</div>
-              </div>
-              <div className="h-10 w-px bg-foreground opacity-30" />
-              <div>
-                <div className="font-display text-3xl font-semibold">8</div>
-                <div className="text-xs uppercase tracking-wider text-muted-foreground">Certifications</div>
-              </div>
-            </div>
+            </motion.div>
           </motion.div>
 
+          {/* ── Right: Lanyard ── */}
           <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-80px" }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-            className="glass rounded-3xl p-6 lg:col-span-2 border-2 border-foreground"
+            initial={{ opacity: 0, x: 30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: "-60px" }}
+            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+            className="relative h-[480px] w-full sm:h-[540px]"
           >
-            <div className="mb-4 text-xs uppercase tracking-[0.18em] text-foreground font-semibold">Focus areas</div>
-            <ul className="grid grid-cols-2 gap-2">
-              {focus.map(({ icon: Icon, label }) => (
-                <li
-                  key={label}
-                  className="group flex items-center gap-2 rounded-xl border-2 border-foreground bg-background px-3 py-2.5 text-sm transition-all hover:bg-foreground hover:text-background"
-                >
-                  <Icon className="h-4 w-4 transition-transform group-hover:scale-110" />
-                  <span className="font-medium">{label}</span>
-                </li>
-              ))}
-            </ul>
+            <Lanyard
+              position={[0, -3.5, 18.0]}
+              gravity={[0, -40, 0]}
+              frontImage={profile.avatar}
+              backImage={profile.avatar}
+              imageFit="cover"
+              lanyardWidth={1.2}
+            />
           </motion.div>
         </div>
       </div>

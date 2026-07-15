@@ -1,57 +1,169 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { Briefcase } from "lucide-react";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { ArrowUpRight, Briefcase } from "lucide-react";
+import { useRef } from "react";
 import { SectionHeader } from "./SectionHeader";
 import { experiences } from "@/lib/portfolio-data";
+import { cn } from "@/lib/utils";
+
+/* ── Stagger container + item variants ──────────────────────── */
+
+const containerVariants = {
+  hidden: {},
+  visible: {
+    transition: { staggerChildren: 0.12, delayChildren: 0.1 },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 18 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.55, ease: "easeOut" },
+  },
+};
+
+const highlightVariants = {
+  hidden: { opacity: 0, x: -10 },
+  visible: (i: number) => ({
+    opacity: 1,
+    x: 0,
+    transition: { duration: 0.4, delay: 0.35 + i * 0.07, ease: "easeOut" },
+  }),
+};
+
+/* ── Timeline progress line ─────────────────────────────────── */
+
+function TimelineProgress() {
+  const ref = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start center", "end center"],
+  });
+  const scaleY = useTransform(scrollYProgress, [0, 1], [0, 1]);
+
+  return (
+    <div ref={ref} className="absolute left-6 top-0 bottom-0 hidden w-px md:block">
+      {/* Track */}
+      <div className="absolute inset-0 bg-gray-800" />
+      {/* Progress fill */}
+      <motion.div
+        style={{ scaleY, transformOrigin: "top" }}
+        className="absolute inset-0 bg-gradient-to-b from-amber-400 via-amber-400/60 to-transparent"
+      />
+    </div>
+  );
+}
+
+/* ── Single experience entry ────────────────────────────────── */
+
+function ExperienceEntry({
+  exp,
+  idx,
+}: {
+  exp: (typeof experiences)[number];
+  idx: number;
+}) {
+  return (
+    <motion.div
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, margin: "-60px" }}
+      variants={containerVariants}
+      className="group relative grid grid-cols-1 gap-y-1 md:grid-cols-[48px_1fr] md:gap-x-8"
+    >
+      {/* ── Timeline node (desktop) ── */}
+      <div className="relative hidden md:flex md:flex-col md:items-center">
+        <motion.div
+          variants={itemVariants}
+          className="relative z-10 grid h-12 w-12 place-items-center rounded-xl border-2 border-gray-800 bg-card/80 backdrop-blur transition-colors duration-300 group-hover:border-amber-400/60"
+        >
+          <Briefcase className="h-5 w-5 text-slate-400 transition-colors duration-300 group-hover:text-amber-400" />
+        </motion.div>
+      </div>
+
+      {/* ── Content ── */}
+      <div className="relative">
+        {/* Period pill */}
+        <motion.div variants={itemVariants}>
+          <span className="inline-flex items-center gap-2 rounded-full border border-gray-800 bg-gray-900/60 px-3 py-1 text-xs font-medium uppercase tracking-[0.18em] text-amber-400/90 backdrop-blur">
+            <span className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse" />
+            {exp.period}
+          </span>
+        </motion.div>
+
+        {/* Role heading */}
+        <motion.h3
+          variants={itemVariants}
+          className="mt-4 flex items-center gap-2 font-display text-2xl font-semibold tracking-tight text-white sm:text-3xl"
+        >
+          {exp.role}
+          <ArrowUpRight className="h-5 w-5 shrink-0 text-slate-600 transition-all duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-amber-400" />
+        </motion.h3>
+
+        {/* Company */}
+        <motion.p
+          variants={itemVariants}
+          className="mt-1 text-sm font-medium tracking-wide text-slate-500"
+        >
+          {exp.company}
+        </motion.p>
+
+        {/* Animated divider */}
+        <motion.div
+          initial={{ scaleX: 0 }}
+          whileInView={{ scaleX: 1 }}
+          viewport={{ once: true, margin: "-60px" }}
+          transition={{ duration: 0.6, delay: 0.25, ease: "easeOut" }}
+          className="mt-5 h-px w-20 origin-left bg-gradient-to-r from-amber-400/50 to-transparent"
+        />
+
+        {/* Highlights list */}
+        <ul className="mt-5 space-y-3">
+          {exp.highlights.map((h, i) => (
+            <motion.li
+              key={h}
+              custom={i}
+              variants={highlightVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-60px" }}
+              className="flex items-start gap-3 text-[15px] leading-relaxed text-slate-400"
+            >
+              <span className="mt-[9px] h-1.5 w-1.5 shrink-0 rounded-full bg-amber-400/40" />
+              <span className="transition-colors duration-200 group-hover:text-slate-300">
+                {h}
+              </span>
+            </motion.li>
+          ))}
+        </ul>
+      </div>
+    </motion.div>
+  );
+}
+
+/* ── Main section ───────────────────────────────────────────── */
 
 export function Experience() {
   return (
-    <section id="experience" className="relative py-24">
-      <div className="mx-auto max-w-5xl px-6">
+    <section id="experience" className="relative overflow-hidden py-24">
+      <div className="mx-auto max-w-4xl px-6">
         <SectionHeader
           eyebrow="Experience"
           title="A timeline of shipping work"
           description="Roles where I've built production AI and full-stack systems."
         />
 
-        <div className="relative">
-          <div className="absolute left-4 top-2 bottom-2 w-0.5 bg-foreground md:left-1/2 md:bg-foreground" />
+        <div className="relative mt-16">
+          {/* Scroll-driven timeline line */}
+          <TimelineProgress />
 
-          <div className="space-y-10">
+          {/* Experience entries */}
+          <div className="space-y-16 sm:space-y-20">
             {experiences.map((exp, idx) => (
-              <motion.div
-                key={exp.company}
-                initial={{ opacity: 0, y: 24 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-80px" }}
-                transition={{ duration: 0.6, delay: idx * 0.1 }}
-                className={`relative flex flex-col gap-4 md:grid md:grid-cols-2 md:gap-10 ${
-                  idx % 2 === 1 ? "md:[direction:rtl]" : ""
-                }`}
-              >
-                <div className="relative pl-12 md:pl-0 md:[direction:ltr] md:px-2">
-                  <span className="absolute left-0 top-1.5 grid h-8 w-8 place-items-center rounded-full border-2 border-foreground bg-background shadow-lg md:left-1/2 md:-translate-x-1/2">
-                    <span className="h-2.5 w-2.5 rounded-full bg-foreground animate-pulse" />
-                  </span>
-                  <div className="glass rounded-2xl p-6 border-2 border-foreground">
-                    <div className="mb-2 flex items-center gap-2 text-xs uppercase tracking-wider text-foreground font-semibold">
-                      <Briefcase className="h-3.5 w-3.5" /> {exp.period}
-                    </div>
-                    <h3 className="font-display text-xl font-semibold">{exp.role}</h3>
-                    <p className="text-sm text-foreground font-medium">{exp.company}</p>
-                    <ul className="mt-4 space-y-2">
-                      {exp.highlights.map((h) => (
-                        <li key={h} className="flex gap-2 text-sm text-muted-foreground">
-                          <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-foreground" />
-                          {h}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-                <div className="hidden md:block" />
-              </motion.div>
+              <ExperienceEntry key={exp.company} exp={exp} idx={idx} />
             ))}
           </div>
         </div>

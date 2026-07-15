@@ -48,6 +48,16 @@ const config: Config = {
         "2xl": "calc(var(--radius) + 8px)",
       },
       keyframes: {
+        meteor: {
+          "0%": { transform: "rotate(215deg) translateX(0)", opacity: "1" },
+          "70%": { opacity: "1" },
+          "100%": { transform: "rotate(215deg) translateX(-500px)", opacity: "0" },
+        },
+        "meteor-long": {
+          "0%": { transform: "rotate(215deg) translateX(0)", opacity: "1" },
+          "70%": { opacity: "1" },
+          "100%": { transform: "rotate(215deg) translateX(-1200px)", opacity: "0" },
+        },
         blob: {
           "0%, 100%": { transform: "translate(0, 0) scale(1)" },
           "33%": { transform: "translate(40px, -60px) scale(1.1)" },
@@ -95,6 +105,8 @@ const config: Config = {
         },
       },
       animation: {
+        "meteor-effect": "meteor 5s linear infinite",
+        "meteor-effect-long": "meteor-long 8s linear infinite",
         blob: "blob 18s ease-in-out infinite",
         shimmer: "shimmer 3s linear infinite",
         float: "float 6s ease-in-out infinite",

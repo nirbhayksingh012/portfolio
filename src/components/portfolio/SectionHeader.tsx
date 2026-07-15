@@ -17,34 +17,46 @@ export function SectionHeader({
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-80px" }}
       transition={{ duration: 0.6 }}
-      className="mx-auto mb-12 max-w-2xl text-center"
+      className="mx-auto mb-16 max-w-3xl text-center"
     >
-      <motion.div
+      {/* Eyebrow — simple gradient text, no badge */}
+      <motion.span
         initial={{ opacity: 0, y: 10 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-80px" }}
-        transition={{ duration: 0.6, delay: 0.1 }}
-        className="mb-3 inline-flex items-center gap-2 rounded-full border-2 border-foreground bg-card/60 px-3 py-1 text-xs uppercase tracking-[0.18em] text-foreground backdrop-blur"
+        transition={{ duration: 0.5, delay: 0.1 }}
+        className="mb-4 inline-block text-sm font-semibold uppercase tracking-[0.2em] text-gradient"
       >
-        <span className="h-1.5 w-1.5 rounded-full bg-foreground animate-pulse" />
         {eyebrow}
-      </motion.div>
+      </motion.span>
+
+      {/* Title — larger and bolder */}
       <motion.h2
         initial={{ opacity: 0, y: 8 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-80px" }}
         transition={{ duration: 0.6, delay: 0.2 }}
-        className="font-display text-3xl font-semibold tracking-tight sm:text-4xl md:text-5xl"
+        className="font-display text-4xl font-bold tracking-tight text-white sm:text-5xl md:text-6xl"
       >
         {title}
       </motion.h2>
+
+      {/* Accent line */}
+      <motion.div
+        initial={{ scaleX: 0 }}
+        whileInView={{ scaleX: 1 }}
+        viewport={{ once: true, margin: "-80px" }}
+        transition={{ duration: 0.6, delay: 0.35, ease: "easeOut" }}
+        className="mx-auto mt-5 h-[2px] w-16 origin-center rounded-full bg-gradient-to-r from-amber-400 to-orange-500"
+      />
+
       {description && (
         <motion.p
           initial={{ opacity: 0, y: 6 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.6, delay: 0.3 }}
-          className="mt-4 text-base text-muted-foreground sm:text-lg"
+          transition={{ duration: 0.6, delay: 0.4 }}
+          className="mt-5 text-base text-slate-500 sm:text-lg"
         >
           {description}
         </motion.p>
