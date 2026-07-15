@@ -1,10 +1,11 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ArrowRight, Download, Github, Linkedin, Mail, Sparkles } from "lucide-react";
+import { ArrowRight, Download, Github, Linkedin, Mail, ChevronDown } from "lucide-react";
 import { useEffect, useState } from "react";
 import { profile } from "@/lib/portfolio-data";
-import Image from "next/image";
+
+/* ── Typewriter ───────────────────────────────────────────── */
 
 function Typewriter({ words }: { words: string[] }) {
   const [i, setI] = useState(0);
@@ -15,7 +16,9 @@ function Typewriter({ words }: { words: string[] }) {
     const current = words[i % words.length];
     const speed = deleting ? 40 : 90;
     const t = setTimeout(() => {
-      const next = deleting ? current.slice(0, text.length - 1) : current.slice(0, text.length + 1);
+      const next = deleting
+        ? current.slice(0, text.length - 1)
+        : current.slice(0, text.length + 1);
       setText(next);
       if (!deleting && next === current) setTimeout(() => setDeleting(true), 1400);
       else if (deleting && next === "") {
@@ -29,95 +32,147 @@ function Typewriter({ words }: { words: string[] }) {
   return (
     <span className="text-gradient">
       {text}
-      <span className="ml-0.5 inline-block h-[0.9em] w-[2px] -translate-y-[-0.05em] bg-ai-cyan animate-caret align-middle" />
+      <span className="ml-0.5 inline-block h-[0.9em] w-[2px] -translate-y-[-0.05em] bg-amber-400 align-middle animate-caret" />
     </span>
   );
 }
 
+/* ── Floating particles ─────────────────────────────────────── */
+
+function Particles() {
+  return (
+    <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
+      {Array.from({ length: 30 }).map((_, i) => (
+        <div
+          key={i}
+          className="absolute h-1 w-1 rounded-full"
+          style={{
+            left: `${Math.random() * 100}%`,
+            top: `${Math.random() * 100}%`,
+            backgroundColor: i % 3 === 0 ? "#fbbf24" : i % 3 === 1 ? "#60a5fa" : "#ffffff",
+            opacity: 0.08 + Math.random() * 0.12,
+            animation: `heroFloat ${4 + Math.random() * 6}s ${Math.random() * 4}s ease-in-out infinite`,
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
+/* ── Motion variants ────────────────────────────────────────── */
+
+const containerVariants = {
+  hidden: {},
+  show: {
+    transition: { staggerChildren: 0.1, delayChildren: 0.15 },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] },
+  },
+};
+
+/* ── Hero ─────────────────────────────────────────────────── */
+
 export function Hero() {
   return (
-    <section id="top" className="relative pt-36 pb-24 sm:pt-44 sm:pb-32">
-      <div className="mx-auto max-w-5xl px-6">
-        <div className="flex flex-col-reverse items-center gap-12 md:flex-row md:items-center md:justify-between">
+    <section id="top" className="relative overflow-hidden pt-32 pb-24 sm:pt-40 sm:pb-32">
+      {/* Keyframes for floating particles */}
+      <style jsx global>{`
+        @keyframes heroFloat {
+          0%, 100% { transform: translateY(0) translateX(0); }
+          25% { transform: translateY(-20px) translateX(10px); }
+          50% { transform: translateY(-8px) translateX(-8px); }
+          75% { transform: translateY(-25px) translateX(5px); }
+        }
+      `}</style>
 
-          {/* ── LEFT: all text content ── */}
-          <div className="flex-1 text-left">
-            <motion.div
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              className="mb-6 inline-flex items-center gap-2 rounded-full border border-border bg-card/60 px-3 py-1 text-xs text-muted-foreground backdrop-blur"
-            >
-              <span className="relative flex h-2 w-2">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-ai-emerald opacity-75" />
-                <span className="relative inline-flex h-2 w-2 rounded-full bg-ai-emerald" />
-              </span>
-              Available for opportunities
-              <Sparkles className="h-3 w-3 text-ai-cyan" />
-            </motion.div>
+      {/* Ambient gradient orbs */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -top-32 left-1/2 h-[600px] w-[600px] -translate-x-1/2 rounded-full opacity-[0.07] blur-[100px]"
+        style={{ background: "radial-gradient(circle, #fbbf24, #3b82f6)" }}
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute right-0 top-1/3 h-[400px] w-[400px] translate-x-1/3 rounded-full bg-amber-500/[0.04] blur-[80px]"
+      />
 
+      {/* Particles */}
+      <Particles />
+
+      <div className="relative mx-auto w-full max-w-5xl px-6">
+        <div className="flex flex-col items-center text-center">
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            animate="show"
+            className="flex flex-col items-center"
+          >
+            {/* Name */}
             <motion.h1
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.05 }}
-              className="font-display text-5xl font-semibold tracking-tight sm:text-6xl md:text-7xl"
+              variants={itemVariants}
+              className="font-display text-5xl font-bold tracking-tight sm:text-6xl md:text-7xl lg:text-8xl"
             >
-              Hi, I'm{" "}
-              <span className="text-gradient">{profile.name.split(" ")[0]}</span>{" "}
-              <span className="text-gradient-subtle">
-                {profile.name.split(" ").slice(1).join(" ")}
+              <span className="text-white">Hi, I&apos;m </span>
+              <span className="text-gradient">{profile.name.split(" ")[0]}</span>
+              <br className="hidden sm:block" />
+              <span className="text-slate-500">
+                {" "}{profile.name.split(" ").slice(1).join(" ")}
               </span>
             </motion.h1>
 
+            {/* Typewriter */}
             <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="mt-5 text-xl font-medium sm:text-2xl"
+              variants={itemVariants}
+              className="mt-6 text-xl font-medium sm:text-2xl md:text-3xl"
             >
               <Typewriter words={profile.roles} />
             </motion.div>
 
+            {/* Tagline */}
             <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.6, delay: 0.35 }}
-              className="mt-6 max-w-xl text-base text-muted-foreground sm:text-lg"
+              variants={itemVariants}
+              className="mt-6 max-w-xl text-base leading-relaxed text-slate-500 sm:text-lg"
             >
               {profile.tagline}
             </motion.p>
 
+            {/* CTA buttons */}
             <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.45 }}
-              className="mt-9 flex flex-wrap items-center gap-3"
+              variants={itemVariants}
+              className="mt-10 flex flex-wrap items-center justify-center gap-3"
             >
               <a
                 href="/resume.pdf"
-                className="group inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-ai-violet to-ai-cyan px-5 py-2.5 text-sm font-medium text-white shadow-lg shadow-ai-violet/30 transition-all hover:shadow-xl hover:shadow-ai-violet/40"
+                className="group inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-amber-400 to-orange-500 px-6 py-3 text-sm font-semibold text-gray-900 shadow-lg shadow-amber-500/20 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-amber-500/30"
               >
-                <Download className="h-4 w-4" /> Download Resume
+                <Download className="h-4 w-4" />
+                Download Resume
               </a>
               <a
                 href="#projects"
-                className="group inline-flex items-center gap-2 rounded-xl border border-border bg-card/60 px-5 py-2.5 text-sm font-medium text-foreground backdrop-blur transition-colors hover:bg-accent"
+                className="group inline-flex items-center gap-2 rounded-xl border border-white/[0.1] bg-white/[0.03] px-6 py-3 text-sm font-medium text-slate-300 backdrop-blur-sm transition-all duration-300 hover:scale-105 hover:border-white/[0.2] hover:bg-white/[0.07] hover:text-white"
               >
-                View Projects{" "}
-                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                View Projects
+                <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
               </a>
               <a
                 href="#contact"
-                className="inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+                className="inline-flex items-center gap-2 px-6 py-3 text-sm font-medium text-slate-600 transition-all duration-300 hover:text-white"
               >
                 Contact Me
               </a>
             </motion.div>
 
+            {/* Social icons */}
             <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.6, delay: 0.6 }}
+              variants={itemVariants}
               className="mt-10 flex items-center gap-2"
             >
               {[
@@ -131,40 +186,24 @@ export function Hero() {
                   target="_blank"
                   rel="noreferrer"
                   aria-label={label}
-                  className="grid h-10 w-10 place-items-center rounded-xl border border-border bg-card/60 text-muted-foreground backdrop-blur transition-all hover:-translate-y-0.5 hover:border-ai-violet/40 hover:text-foreground"
+                  className="group/social grid h-11 w-11 place-items-center rounded-xl border border-white/[0.06] bg-white/[0.02] text-slate-500 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-white/[0.12] hover:bg-white/[0.06] hover:text-white hover:shadow-lg hover:shadow-white/[0.05]"
                 >
                   <Icon className="h-4 w-4" />
                 </a>
               ))}
             </motion.div>
-          </div>
 
-          {/* ── RIGHT: profile picture ── */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.88 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.7, delay: 0.1 }}
-            className="flex shrink-0 items-center justify-center"
-          >
-            <div className="relative">
-              {/* Animated glow ring */}
-              <span className="absolute inset-0 rounded-full bg-gradient-to-tr from-ai-violet via-ai-cyan to-ai-emerald animate-spin-slow opacity-60 blur-[3px]" />
-              {/* Gradient border */}
-              <div className="relative rounded-full p-[3px] bg-gradient-to-tr from-ai-violet via-ai-cyan to-ai-emerald">
-                <div className="rounded-full overflow-hidden h-52 w-52 sm:h-64 sm:w-64 md:h-72 md:w-72 bg-card ring-2 ring-background">
-                  <Image
-                    src={profile.avatar}
-                    alt={profile.name}
-                    width={288}
-                    height={288}
-                    className="h-full w-full object-cover"
-                    priority
-                  />
-                </div>
-              </div>
-            </div>
+            {/* Scroll indicator */}
+            <motion.div
+              variants={itemVariants}
+              className="mt-16"
+            >
+              <a href="#experience" className="flex flex-col items-center gap-1 text-slate-700 transition-colors duration-300 hover:text-slate-400">
+                <span className="text-[10px] uppercase tracking-[0.2em]">Scroll</span>
+                <ChevronDown className="h-4 w-4 animate-float" />
+              </a>
+            </motion.div>
           </motion.div>
-
         </div>
       </div>
     </section>

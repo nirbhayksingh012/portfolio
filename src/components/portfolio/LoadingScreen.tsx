@@ -24,18 +24,33 @@ export function LoadingScreen() {
           transition={{ duration: 0.5 }}
           className="fixed inset-0 z-[100] grid place-items-center bg-background"
         >
-          <div className="flex flex-col items-center gap-4">
-            <div className="relative h-14 w-14">
-              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-ai-violet to-ai-cyan blur-xl opacity-60" />
-              <div className="relative grid h-14 w-14 place-items-center rounded-2xl bg-gradient-to-br from-ai-violet to-ai-cyan text-white">
-                <motion.span
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 1.4, repeat: Infinity, ease: "linear" }}
-                  className="block h-6 w-6 rounded-full border-2 border-white/30 border-t-white"
+          <div className="flex flex-col items-center gap-6">
+            <div className="relative h-16 w-16">
+              <motion.div
+                animate={{ rotate: 360, scale: [1, 1.1, 1] }}
+                transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                className="absolute inset-0 rounded-2xl border-2 border-foreground opacity-30"
+              />
+              <motion.div
+                animate={{ rotate: -360 }}
+                transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+                className="absolute inset-0 rounded-2xl border-2 border-transparent border-t-foreground"
+              />
+              <div className="relative grid h-16 w-16 place-items-center rounded-2xl bg-foreground/5">
+                <motion.div
+                  animate={{ scale: [0.8, 1, 0.8] }}
+                  transition={{ duration: 1.4, repeat: Infinity }}
+                  className="h-2 w-2 rounded-full bg-foreground"
                 />
               </div>
             </div>
-            <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">Initializing</p>
+            <motion.p
+              animate={{ opacity: [0.5, 1, 0.5] }}
+              transition={{ duration: 1.5, repeat: Infinity }}
+              className="text-xs uppercase tracking-[0.3em] text-foreground font-semibold"
+            >
+              Initializing
+            </motion.p>
           </div>
         </motion.div>
       )}
