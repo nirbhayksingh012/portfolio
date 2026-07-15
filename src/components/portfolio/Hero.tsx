@@ -40,18 +40,36 @@ function Typewriter({ words }: { words: string[] }) {
 /* ── Floating particles ─────────────────────────────────────── */
 
 function Particles() {
+  const [particles, setParticles] = useState<
+    { left: string; top: string; bg: string; opacity: number; animation: string }[]
+  >([]);
+
+  useEffect(() => {
+    setParticles(
+      Array.from({ length: 30 }, (_, i) => ({
+        left: `${Math.random() * 100}%`,
+        top: `${Math.random() * 100}%`,
+        bg: i % 3 === 0 ? "#fbbf24" : i % 3 === 1 ? "#60a5fa" : "#ffffff",
+        opacity: 0.08 + Math.random() * 0.12,
+        animation: `heroFloat ${4 + Math.random() * 6}s ${Math.random() * 4}s ease-in-out infinite`,
+      }))
+    );
+  }, []);
+
+  if (particles.length === 0) return null;
+
   return (
     <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
-      {Array.from({ length: 30 }).map((_, i) => (
+      {particles.map((p, i) => (
         <div
           key={i}
           className="absolute h-1 w-1 rounded-full"
           style={{
-            left: `${Math.random() * 100}%`,
-            top: `${Math.random() * 100}%`,
-            backgroundColor: i % 3 === 0 ? "#fbbf24" : i % 3 === 1 ? "#60a5fa" : "#ffffff",
-            opacity: 0.08 + Math.random() * 0.12,
-            animation: `heroFloat ${4 + Math.random() * 6}s ${Math.random() * 4}s ease-in-out infinite`,
+            left: p.left,
+            top: p.top,
+            backgroundColor: p.bg,
+            opacity: p.opacity,
+            animation: p.animation,
           }}
         />
       ))}
@@ -73,7 +91,7 @@ const itemVariants = {
   show: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] },
+    transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] as const },
   },
 };
 
@@ -120,11 +138,7 @@ export function Hero() {
               className="font-display text-5xl font-bold tracking-tight sm:text-6xl md:text-7xl lg:text-8xl"
             >
               <span className="text-white">Hi, I&apos;m </span>
-              <span className="text-gradient">{profile.name.split(" ")[0]}</span>
-              <br className="hidden sm:block" />
-              <span className="text-slate-500">
-                {" "}{profile.name.split(" ").slice(1).join(" ")}
-              </span>
+              <span className="text-gradient">{profile.name}</span>
             </motion.h1>
 
             {/* Typewriter */}
