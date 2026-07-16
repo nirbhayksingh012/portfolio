@@ -1,12 +1,13 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Github, Linkedin, Mail, MapPin, Send, Sparkles, ArrowUpRight, type LucideIcon } from "lucide-react";
 import { z } from "zod";
 import { toast } from "sonner";
 import { SectionHeader } from "./SectionHeader";
 import { profile } from "@/lib/portfolio-data";
+import { useGSAPAnimations, gsap } from "@/hooks/useGSAP";
+import { useMagnetic } from "@/hooks/useMagnetic";
 
 const schema = z.object({
   name: z.string().trim().min(1, "Name is required").max(80),
@@ -30,12 +31,11 @@ function SocialPill({
   external?: boolean;
 }) {
   return (
-    <motion.a
+    <a
       href={href}
       target={external ? "_blank" : undefined}
       rel={external ? "noreferrer" : undefined}
-      whileHover={{ y: -3 }}
-      className="group/pill relative flex items-center gap-3 rounded-xl border border-white/[0.06] bg-white/[0.02] px-5 py-3.5 backdrop-blur-sm transition-all duration-400 hover:border-white/[0.12] hover:bg-white/[0.05]"
+      className="social-pill group/pill relative flex items-center gap-3 rounded-xl border border-white/[0.06] bg-white/[0.02] px-5 py-3.5 backdrop-blur-sm transition-all duration-400 hover:border-white/[0.12] hover:bg-white/[0.05] hover:-translate-y-[3px]"
     >
       {/* Colored glow */}
       <div
@@ -61,7 +61,7 @@ function SocialPill({
         className="absolute bottom-0 left-4 right-4 h-[1.5px] rounded-full opacity-0 transition-opacity duration-400 group-hover/pill:opacity-50"
         style={{ backgroundColor: color }}
       />
-    </motion.a>
+    </a>
   );
 }
 
@@ -69,6 +69,10 @@ function SocialPill({
 
 export function Contact() {
   const [loading, setLoading] = useState(false);
+  const sectionRef = useRef<HTMLElement>(null);
+  const leftRef = useRef<HTMLDivElement>(null);
+  const formRef = useRef<HTMLFormElement>(null);
+  const magneticRef = useMagnetic(0.25);
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -104,8 +108,91 @@ export function Contact() {
     }
   };
 
+  useGSAPAnimations(() => {
+    if (!sectionRef.current) return;
+
+    // Left info — slide from left with parallax
+    if (leftRef.current) {
+      gsap.fromTo(
+        leftRef.current,
+        { x: -50, opacity: 0 },
+        {
+          x: 0,
+          opacity: 1,
+          duration: 0.8,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top 75%",
+            toggleActions: "play none none none",
+          },
+        }
+      );
+
+      // Social pills — stagger pop-in
+      const pills = leftRef.current.querySelectorAll(".social-pill");
+      gsap.fromTo(
+        pills,
+        { x: -20, opacity: 0 },
+        {
+          x: 0,
+          opacity: 1,
+          stagger: 0.08,
+          duration: 0.5,
+          delay: 0.3,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top 75%",
+            toggleActions: "play none none none",
+          },
+        }
+      );
+    }
+
+    // Form — slide from right with parallax
+    if (formRef.current) {
+      gsap.fromTo(
+        formRef.current,
+        { x: 50, opacity: 0 },
+        {
+          x: 0,
+          opacity: 1,
+          duration: 0.8,
+          delay: 0.15,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top 75%",
+            toggleActions: "play none none none",
+          },
+        }
+      );
+
+      // Input fields — stagger fade up
+      const inputs = formRef.current.querySelectorAll("label");
+      gsap.fromTo(
+        inputs,
+        { y: 20, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          stagger: 0.1,
+          duration: 0.5,
+          delay: 0.4,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top 75%",
+            toggleActions: "play none none none",
+          },
+        }
+      );
+    }
+  }, []);
+
   return (
-    <section id="contact" className="relative py-24">
+    <section ref={sectionRef} id="contact" className="relative py-24">
       <div className="mx-auto max-w-5xl px-6">
         <SectionHeader
           eyebrow="Contact"
@@ -115,11 +202,8 @@ export function Contact() {
 
         <div className="grid gap-10 lg:grid-cols-5">
           {/* ── LEFT: Info + Socials ── */}
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, margin: "-60px" }}
-            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          <div
+            ref={leftRef}
             className="flex flex-col gap-6 lg:col-span-2"
           >
             <div>
@@ -169,14 +253,11 @@ export function Contact() {
                 <span className="font-semibold text-slate-300">24 hours</span>
               </p>
             </div>
-          </motion.div>
+          </div>
 
           {/* ── RIGHT: Form ── */}
-          <motion.form
-            initial={{ opacity: 0, x: 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, margin: "-60px" }}
-            transition={{ duration: 0.6, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+          <form
+            ref={formRef}
             onSubmit={onSubmit}
             className="lg:col-span-3 space-y-5 rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6 backdrop-blur-sm sm:p-8"
           >
@@ -222,11 +303,11 @@ export function Contact() {
               />
             </label>
 
-            <motion.button
+            {/* Magnetic submit button */}
+            <button
+              ref={magneticRef}
               type="submit"
               disabled={loading}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
               className="group/btn relative inline-flex w-full items-center justify-center gap-2 overflow-hidden rounded-xl bg-gradient-to-r from-amber-400 to-orange-500 px-6 py-3.5 text-sm font-semibold text-gray-900 shadow-lg shadow-amber-500/20 transition-all duration-300 hover:shadow-xl hover:shadow-amber-500/30 disabled:opacity-60 sm:w-auto"
             >
               <span className="relative z-10 flex items-center gap-2">
@@ -239,8 +320,8 @@ export function Contact() {
                   </>
                 )}
               </span>
-            </motion.button>
-          </motion.form>
+            </button>
+          </form>
         </div>
       </div>
     </section>

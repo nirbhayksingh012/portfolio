@@ -1,8 +1,9 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { useRef } from "react";
 import { Github, Linkedin, Mail, Heart, ArrowUp } from "lucide-react";
 import { profile } from "@/lib/portfolio-data";
+import { useGSAPAnimations, gsap } from "@/hooks/useGSAP";
 
 const socials = [
   { href: "https://github.com/nirbhayksingh012", icon: Github, label: "GitHub", color: "#ffffff" },
@@ -19,8 +20,33 @@ const navLinks = [
 ];
 
 export function Footer() {
+  const footerRef = useRef<HTMLElement>(null);
+
+  useGSAPAnimations(() => {
+    if (!footerRef.current) return;
+
+    // Stagger all footer elements on enter
+    const elements = footerRef.current.querySelectorAll(".footer-animate");
+    gsap.fromTo(
+      elements,
+      { y: 16, opacity: 0 },
+      {
+        y: 0,
+        opacity: 1,
+        stagger: 0.1,
+        duration: 0.5,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: footerRef.current,
+          start: "top 95%",
+          toggleActions: "play none none none",
+        },
+      }
+    );
+  }, []);
+
   return (
-    <footer className="relative border-t border-white/[0.06] pt-16 pb-8">
+    <footer ref={footerRef} className="relative border-t border-white/[0.06] pt-16 pb-8">
       {/* Subtle gradient glow at top */}
       <div className="pointer-events-none absolute left-1/2 top-0 h-px w-2/3 -translate-x-1/2 bg-gradient-to-r from-transparent via-amber-400/40 to-transparent" />
 
@@ -28,13 +54,7 @@ export function Footer() {
         {/* Top row: Brand + Nav + Socials */}
         <div className="flex flex-col items-center gap-10 sm:flex-row sm:items-start sm:justify-between">
           {/* Brand */}
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="text-center sm:text-left"
-          >
+          <div className="footer-animate text-center sm:text-left">
             <span className="font-display text-xl font-semibold text-white">
               {profile.name.split(" ")[0]}
               <span className="text-slate-500">.</span>
@@ -42,16 +62,10 @@ export function Footer() {
             <p className="mt-1.5 max-w-[240px] text-xs leading-relaxed text-slate-600">
               Building scalable AI systems &amp; modern web experiences.
             </p>
-          </motion.div>
+          </div>
 
           {/* Navigation */}
-          <motion.nav
-            initial={{ opacity: 0, y: 12 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="flex flex-wrap justify-center gap-x-6 gap-y-2"
-          >
+          <nav className="footer-animate flex flex-wrap justify-center gap-x-6 gap-y-2">
             {navLinks.map((link) => (
               <a
                 key={link.label}
@@ -61,16 +75,10 @@ export function Footer() {
                 {link.label}
               </a>
             ))}
-          </motion.nav>
+          </nav>
 
           {/* Social icons */}
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="flex items-center gap-2"
-          >
+          <div className="footer-animate flex items-center gap-2">
             {socials.map(({ href, icon: Icon, label, color }) => (
               <a
                 key={label}
@@ -85,7 +93,7 @@ export function Footer() {
                 />
               </a>
             ))}
-          </motion.div>
+          </div>
         </div>
 
         {/* Divider */}

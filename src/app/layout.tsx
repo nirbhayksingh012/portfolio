@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Space_Grotesk, JetBrains_Mono, Geist } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import { Toaster } from "sonner";
+import { SmoothScroll } from "@/components/ui/smooth-scroll";
 import "./globals.css";
 import "./lightfall.css";
 import { cn } from "@/lib/utils";
@@ -56,7 +57,9 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <SmoothScroll>
+            {children}
+          </SmoothScroll>
           <Toaster richColors theme="dark" position="bottom-right" />
         </ThemeProvider>
       </body>

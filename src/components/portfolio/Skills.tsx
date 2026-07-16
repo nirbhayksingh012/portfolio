@@ -1,7 +1,8 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { useRef, useEffect, useState } from "react";
 import { SectionHeader } from "./SectionHeader";
+import { useGSAPAnimations, gsap, ScrollTrigger } from "@/hooks/useGSAP";
 
 /* ── All skills with real logos ──────────────────────────────── */
 
@@ -98,7 +99,7 @@ function SkillPill({
   );
 }
 
-/* ── Marquee row ────────────────────────────────────────────── */
+/* ── GSAP Marquee row with scroll-velocity ─────────────────── */
 
 function MarqueeRow({
   items,
@@ -109,20 +110,62 @@ function MarqueeRow({
   direction?: "left" | "right";
   speed?: number;
 }) {
+  const rowRef = useRef<HTMLDivElement>(null);
+  const innerRef = useRef<HTMLDivElement>(null);
+
   // Double the items for seamless loop
   const doubled = [...items, ...items];
 
+  useGSAPAnimations(() => {
+    if (!innerRef.current || !rowRef.current) return;
+
+    // Calculate the width of one set of items
+    const totalWidth = innerRef.current.scrollWidth / 2;
+    const startX = direction === "left" ? 0 : -totalWidth;
+    const endX = direction === "left" ? -totalWidth : 0;
+
+    // Base marquee animation
+    const marquee = gsap.fromTo(
+      innerRef.current,
+      { x: startX },
+      {
+        x: endX,
+        duration: speed,
+        ease: "none",
+        repeat: -1,
+      }
+    );
+
+    // Scroll velocity effect — speed up/slow down based on scroll speed
+    let scrollVelocity = 0;
+    ScrollTrigger.create({
+      trigger: rowRef.current,
+      start: "top bottom",
+      end: "bottom top",
+      onUpdate: (self) => {
+        scrollVelocity = self.getVelocity();
+        const speedFactor = 1 + Math.abs(scrollVelocity) / 3000;
+        gsap.to(marquee, { timeScale: speedFactor, duration: 0.3, overwrite: true });
+      },
+      onLeave: () => {
+        gsap.to(marquee, { timeScale: 1, duration: 0.5 });
+      },
+      onLeaveBack: () => {
+        gsap.to(marquee, { timeScale: 1, duration: 0.5 });
+      },
+    });
+  }, []);
+
   return (
-    <div className="group/marquee relative flex overflow-hidden py-3">
+    <div ref={rowRef} className="group/marquee relative flex overflow-hidden py-3">
       {/* Fade edges */}
       <div className="pointer-events-none absolute left-0 top-0 z-10 h-full w-16 bg-gradient-to-r from-[var(--background)] to-transparent sm:w-24" />
       <div className="pointer-events-none absolute right-0 top-0 z-10 h-full w-16 bg-gradient-to-l from-[var(--background)] to-transparent sm:w-24" />
 
       <div
-        className="flex gap-4 hover:[animation-play-state:paused]"
-        style={{
-          animation: `marquee-${direction} ${speed}s linear infinite`,
-        }}
+        ref={innerRef}
+        className="flex gap-4"
+        style={{ willChange: "transform" }}
       >
         {doubled.map((skill, i) => (
           <SkillPill key={`${skill.name}-${i}`} skill={skill} />
@@ -135,27 +178,32 @@ function MarqueeRow({
 /* ── Main section ───────────────────────────────────────────── */
 
 export function Skills() {
-  return (
-    <section id="skills" className="relative py-24">
-      <style jsx global>{`
-        @keyframes marquee-left {
-          0% {
-            transform: translateX(0);
-          }
-          100% {
-            transform: translateX(-50%);
-          }
-        }
-        @keyframes marquee-right {
-          0% {
-            transform: translateX(-50%);
-          }
-          100% {
-            transform: translateX(0);
-          }
-        }
-      `}</style>
+  const sectionRef = useRef<HTMLElement>(null);
+  const marqueeContainerRef = useRef<HTMLDivElement>(null);
 
+  useGSAPAnimations(() => {
+    if (!marqueeContainerRef.current) return;
+
+    // Fade in the marquee rows on scroll
+    gsap.fromTo(
+      marqueeContainerRef.current,
+      { opacity: 0, y: 30 },
+      {
+        opacity: 1,
+        y: 0,
+        duration: 0.8,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: marqueeContainerRef.current,
+          start: "top 90%",
+          toggleActions: "play none none none",
+        },
+      }
+    );
+  }, []);
+
+  return (
+    <section ref={sectionRef} id="skills" className="relative py-24">
       <div className="mx-auto max-w-5xl px-6">
         <SectionHeader
           eyebrow="Skills"
@@ -164,17 +212,11 @@ export function Skills() {
         />
       </div>
 
-      {/* Full-bleed marquee rows */}
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-80px" }}
-        transition={{ duration: 0.7 }}
-        className="mt-4 space-y-3"
-      >
+      {/* Full-bleed marquee rows — GSAP driven with scroll velocity */}
+      <div ref={marqueeContainerRef} className="mt-4 space-y-3">
         <MarqueeRow items={row1} direction="left" speed={35} />
         <MarqueeRow items={row2} direction="right" speed={40} />
-      </motion.div>
+      </div>
     </section>
   );
 }

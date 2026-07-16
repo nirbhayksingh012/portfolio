@@ -1,8 +1,9 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { useRef } from "react";
 import { SectionHeader } from "./SectionHeader";
 import { profile, focus } from "@/lib/portfolio-data";
+import { useGSAPAnimations, gsap } from "@/hooks/useGSAP";
 import dynamic from "next/dynamic";
 
 const Lanyard = dynamic(() => import("./Lanyard"), { ssr: false });
@@ -10,8 +11,125 @@ const Lanyard = dynamic(() => import("./Lanyard"), { ssr: false });
 /* ── Main section ───────────────────────────────────────────── */
 
 export function About() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const leftRef = useRef<HTMLDivElement>(null);
+  const rightRef = useRef<HTMLDivElement>(null);
+  const bioRef = useRef<HTMLDivElement>(null);
+  const tagsRef = useRef<HTMLDivElement>(null);
+
+  useGSAPAnimations(() => {
+    if (!sectionRef.current) return;
+
+    // Left content — slide from left with parallax
+    if (leftRef.current) {
+      gsap.fromTo(
+        leftRef.current,
+        { x: -60, opacity: 0 },
+        {
+          x: 0,
+          opacity: 1,
+          duration: 1,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top 80%",
+            toggleActions: "play none none none",
+          },
+        }
+      );
+
+      // Parallax — left moves slightly slower
+      gsap.to(leftRef.current, {
+        yPercent: -5,
+        ease: "none",
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top bottom",
+          end: "bottom top",
+          scrub: 1.5,
+        },
+      });
+    }
+
+    // Right Lanyard — slide from right with parallax
+    if (rightRef.current) {
+      gsap.fromTo(
+        rightRef.current,
+        { x: 60, opacity: 0 },
+        {
+          x: 0,
+          opacity: 1,
+          duration: 1,
+          delay: 0.2,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top 80%",
+            toggleActions: "play none none none",
+          },
+        }
+      );
+
+      // Parallax — right moves slightly faster
+      gsap.to(rightRef.current, {
+        yPercent: -12,
+        ease: "none",
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top bottom",
+          end: "bottom top",
+          scrub: 1.5,
+        },
+      });
+    }
+
+    // Bio paragraphs — stagger fade in
+    if (bioRef.current) {
+      const paragraphs = bioRef.current.querySelectorAll("p");
+      gsap.fromTo(
+        paragraphs,
+        { y: 30, opacity: 0, filter: "blur(4px)" },
+        {
+          y: 0,
+          opacity: 1,
+          filter: "blur(0px)",
+          stagger: 0.15,
+          duration: 0.7,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: bioRef.current,
+            start: "top 85%",
+            toggleActions: "play none none none",
+          },
+        }
+      );
+    }
+
+    // Focus area tags — pop in with stagger
+    if (tagsRef.current) {
+      const tags = tagsRef.current.querySelectorAll("span");
+      gsap.fromTo(
+        tags,
+        { scale: 0.8, opacity: 0, y: 10 },
+        {
+          scale: 1,
+          opacity: 1,
+          y: 0,
+          stagger: 0.05,
+          duration: 0.5,
+          ease: "back.out(2)",
+          scrollTrigger: {
+            trigger: tagsRef.current,
+            start: "top 90%",
+            toggleActions: "play none none none",
+          },
+        }
+      );
+    }
+  }, []);
+
   return (
-    <section id="about" className="relative py-24">
+    <section ref={sectionRef} id="about" className="relative py-24">
       <div className="relative mx-auto max-w-5xl px-6">
         <SectionHeader
           eyebrow="About"
@@ -21,41 +139,32 @@ export function About() {
 
         <div className="relative mt-8 grid gap-12 lg:grid-cols-[1fr_380px] lg:items-start">
           {/* ── Left: Content ── */}
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, margin: "-60px" }}
-            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          >
-            {/* Bio text */}
-            <p className="font-display text-2xl leading-snug text-white sm:text-3xl">
-              I&apos;m a software engineer focused on the{" "}
-              <span className="text-gradient">GenAI stack</span>: LLM
-              architecture, RAG pipelines, sentiment analysis systems, and the
-              full-stack plumbing that makes them production-ready.
-            </p>
+          <div ref={leftRef}>
+            <div ref={bioRef}>
+              {/* Bio text */}
+              <p className="font-display text-2xl leading-snug text-white sm:text-3xl">
+                I&apos;m a software engineer focused on the{" "}
+                <span className="text-gradient">GenAI stack</span>: LLM
+                architecture, RAG pipelines, sentiment analysis systems, and the
+                full-stack plumbing that makes them production-ready.
+              </p>
 
-            <p className="mt-6 text-base leading-relaxed text-slate-500">
-              I love taking research-grade ideas into production. I trained
-              Rudra, a custom 6.5M-parameter Transformer LLM with autonomous
-              tool-use, on a single consumer GPU. At TATA BlueScope Steel, I
-              built a FinBERT-powered sentiment pipeline processing 500+
-              financial articles daily at ~82% accuracy — cutting manual
-              analyst effort by 60%.
-            </p>
+              <p className="mt-6 text-base leading-relaxed text-slate-500">
+                I love taking research-grade ideas into production. I trained
+                Rudra, a custom 6.5M-parameter Transformer LLM with autonomous
+                tool-use, on a single consumer GPU. At TATA BlueScope Steel, I
+                built a FinBERT-powered sentiment pipeline processing 500+
+                financial articles daily at ~82% accuracy — cutting manual
+                analyst effort by 60%.
+              </p>
+            </div>
 
             {/* Focus areas */}
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-40px" }}
-              transition={{ duration: 0.5, delay: 0.3 }}
-              className="mt-10"
-            >
+            <div className="mt-10">
               <h4 className="mb-4 text-xs font-semibold uppercase tracking-[0.18em] text-slate-600">
                 What I focus on
               </h4>
-              <div className="flex flex-wrap gap-2">
+              <div ref={tagsRef} className="flex flex-wrap gap-2">
                 {focus.map((f) => {
                   const Icon = f.icon;
                   return (
@@ -69,15 +178,12 @@ export function About() {
                   );
                 })}
               </div>
-            </motion.div>
-          </motion.div>
+            </div>
+          </div>
 
           {/* ── Right: Lanyard ── */}
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, margin: "-60px" }}
-            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+          <div
+            ref={rightRef}
             className="relative h-[480px] w-full sm:h-[540px]"
           >
             <Lanyard
@@ -88,7 +194,7 @@ export function About() {
               imageFit="cover"
               lanyardWidth={1.2}
             />
-          </motion.div>
+          </div>
         </div>
       </div>
     </section>
