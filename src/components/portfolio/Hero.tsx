@@ -8,34 +8,92 @@ import { profile } from "@/lib/portfolio-data";
 /* ── Typewriter ───────────────────────────────────────────── */
 
 function Typewriter({ words }: { words: string[] }) {
-  const [i, setI] = useState(0);
-  const [text, setText] = useState("");
-  const [deleting, setDeleting] = useState(false);
+  const [wordIndex, setWordIndex] = useState(0);
+  const [displayedChars, setDisplayedChars] = useState(0);
+  const [phase, setPhase] = useState<"typing" | "holding" | "erasing" | "pausing">("typing");
+  const currentWord = words[wordIndex % words.length];
 
   useEffect(() => {
-    const current = words[i % words.length];
-    const speed = deleting ? 40 : 90;
-    const t = setTimeout(() => {
-      const next = deleting
-        ? current.slice(0, text.length - 1)
-        : current.slice(0, text.length + 1);
-      setText(next);
-      if (!deleting && next === current) setTimeout(() => setDeleting(true), 1400);
-      else if (deleting && next === "") {
-        setDeleting(false);
-        setI((v) => v + 1);
-      }
-    }, speed);
-    return () => clearTimeout(t);
-  }, [text, deleting, i, words]);
+    let timeout: NodeJS.Timeout;
+
+    switch (phase) {
+      case "typing":
+        if (displayedChars < currentWord.length) {
+          timeout = setTimeout(() => {
+            setDisplayedChars((c) => c + 1);
+          }, 70 + Math.random() * 50); // natural typing rhythm
+        } else {
+          timeout = setTimeout(() => setPhase("holding"), 100);
+        }
+        break;
+
+      case "holding":
+        timeout = setTimeout(() => setPhase("erasing"), 2000);
+        break;
+
+      case "erasing":
+        if (displayedChars > 0) {
+          timeout = setTimeout(() => {
+            setDisplayedChars((c) => c - 1);
+          }, 35); // faster erase
+        } else {
+          timeout = setTimeout(() => setPhase("pausing"), 200);
+        }
+        break;
+
+      case "pausing":
+        setWordIndex((i) => i + 1);
+        setPhase("typing");
+        break;
+    }
+
+    return () => clearTimeout(timeout);
+  }, [displayedChars, phase, currentWord]);
+
+  const visibleText = currentWord.slice(0, displayedChars);
 
   return (
-    <span className="text-gradient">
-      {text}
-      <span className="ml-0.5 inline-block h-[0.9em] w-[2px] -translate-y-[-0.05em] bg-amber-400 align-middle animate-caret" />
+    <span className="relative inline-flex items-baseline">
+      {/* Typed characters */}
+      <span className="text-gradient" aria-label={currentWord}>
+        {visibleText.split("").map((char, i) => (
+          <motion.span
+            key={`${wordIndex}-${i}`}
+            initial={{ opacity: 0, y: 8, filter: "blur(4px)" }}
+            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{
+              duration: 0.25,
+              ease: [0.22, 1, 0.36, 1],
+            }}
+            className="inline-block"
+          >
+            {char === " " ? "\u00A0" : char}
+          </motion.span>
+        ))}
+      </span>
+
+      {/* Smooth blinking cursor */}
+      <motion.span
+        className="ml-[2px] inline-block h-[0.85em] w-[3px] translate-y-[0.05em] rounded-full bg-amber-400 align-middle"
+        animate={{
+          opacity: [1, 1, 0, 0, 1],
+          scaleY: [1, 1, 0.8, 0.8, 1],
+        }}
+        transition={{
+          duration: 1,
+          repeat: Infinity,
+          ease: "easeInOut",
+          times: [0, 0.4, 0.5, 0.9, 1],
+        }}
+        style={{
+          boxShadow: "0 0 8px rgba(251, 191, 36, 0.6), 0 0 20px rgba(251, 191, 36, 0.2)",
+        }}
+      />
     </span>
   );
 }
+
 
 /* ── Floating particles ─────────────────────────────────────── */
 

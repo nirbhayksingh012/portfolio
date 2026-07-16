@@ -10,7 +10,7 @@ import { projects } from "@/lib/portfolio-data";
 
 export function Projects() {
   return (
-    <section id="projects" className="relative py-24">
+    <section id="projects" className="relative py-24 overflow-hidden">
       <div className="mx-auto max-w-5xl px-6">
         <SectionHeader
           eyebrow="Featured Projects"
