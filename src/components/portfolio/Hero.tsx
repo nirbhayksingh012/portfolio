@@ -9,16 +9,22 @@ import { splitTextIntoSpans } from "@/lib/splitText";
 
 /* ── Typewriter ───────────────────────────────────────────── */
 
-function Typewriter({ words }: { words: string[] }) {
+function Typewriter({ words, delay = 1500 }: { words: string[]; delay?: number }) {
   const [wordIndex, setWordIndex] = useState(0);
   const [displayedChars, setDisplayedChars] = useState(0);
-  const [phase, setPhase] = useState<"typing" | "holding" | "erasing" | "pausing">("typing");
+  const [phase, setPhase] = useState<"starting" | "typing" | "holding" | "erasing" | "pausing">(
+    delay > 0 ? "starting" : "typing"
+  );
   const currentWord = words[wordIndex % words.length];
 
   useEffect(() => {
     let timeout: NodeJS.Timeout;
 
     switch (phase) {
+      case "starting":
+        timeout = setTimeout(() => setPhase("typing"), delay);
+        break;
+
       case "typing":
         if (displayedChars < currentWord.length) {
           timeout = setTimeout(() => {
@@ -55,23 +61,9 @@ function Typewriter({ words }: { words: string[] }) {
   const visibleText = currentWord.slice(0, displayedChars);
 
   return (
-    <span className="relative inline-flex items-baseline">
+    <span className="relative inline-flex items-baseline min-h-[1.2em]">
       <span className="text-gradient" aria-label={currentWord}>
-        {visibleText.split("").map((char, i) => (
-          <motion.span
-            key={`${wordIndex}-${i}`}
-            initial={{ opacity: 0, y: 8, filter: "blur(4px)" }}
-            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{
-              duration: 0.25,
-              ease: [0.22, 1, 0.36, 1],
-            }}
-            className="inline-block"
-          >
-            {char === " " ? "\u00A0" : char}
-          </motion.span>
-        ))}
+        {visibleText || "\u200B"}
       </span>
 
       <motion.span
@@ -310,7 +302,7 @@ export function Hero() {
               ref={typewriterRef}
               className="mt-6 text-xl font-medium sm:text-2xl md:text-3xl"
             >
-              <Typewriter words={profile.roles} />
+              <Typewriter words={profile.roles} delay={1500} />
             </div>
 
             {/* Tagline */}
