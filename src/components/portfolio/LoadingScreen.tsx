@@ -3,6 +3,16 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useMemo, useState } from "react";
 
+// Fixed seeds so particle layout is stable across renders, only randomized once per mount
+const PARTICLES = Array.from({ length: 18 }, (_, i) => ({
+  id: i,
+  left: Math.random() * 100,
+  size: Math.random() * 2 + 1,
+  duration: Math.random() * 6 + 6,
+  delay: Math.random() * 6,
+  drift: (Math.random() - 0.5) * 60,
+}));
+
 export function LoadingScreen() {
   const [show, setShow] = useState(true);
   const [mounted, setMounted] = useState(false);
@@ -82,6 +92,33 @@ export function LoadingScreen() {
             transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
           />
 
+          {/* Rising particle field — density and speed pick up as progress climbs */}
+          <div className="absolute inset-0 pointer-events-none">
+            {PARTICLES.map((p) => (
+              <motion.span
+                key={p.id}
+                className="absolute rounded-full bg-white"
+                style={{
+                  left: `${p.left}%`,
+                  bottom: "-5%",
+                  width: p.size,
+                  height: p.size,
+                }}
+                animate={{
+                  y: ["0vh", "-105vh"],
+                  x: [0, p.drift],
+                  opacity: [0, 0.5, 0],
+                }}
+                transition={{
+                  duration: progress >= 100 ? p.duration * 0.4 : p.duration,
+                  repeat: Infinity,
+                  delay: p.delay,
+                  ease: "linear",
+                }}
+              />
+            ))}
+          </div>
+
           {/* Scanline sweep */}
           <motion.div
             className="absolute inset-x-0 h-32 pointer-events-none bg-gradient-to-b from-transparent via-white/[0.05] to-transparent"
@@ -106,7 +143,7 @@ export function LoadingScreen() {
             className="absolute rounded-full bg-white blur-[120px] pointer-events-none"
             style={{ width: 420, height: 420 }}
             animate={{
-              opacity: progress >= 100 ? 0.16 : [0.03, 0.07, 0.03],
+              opacity: progress >= 100 ? 0.18 : [0.03, 0.07, 0.03],
               scale: progress >= 100 ? 1.15 : [1, 1.05, 1],
             }}
             transition={{
@@ -115,41 +152,6 @@ export function LoadingScreen() {
               ease: "easeInOut",
             }}
           />
-
-          {/* Rotating ring orbiting the counter, doubling as the progress indicator */}
-          <motion.svg
-            width="46vw"
-            height="46vw"
-            viewBox="0 0 200 200"
-            className="absolute pointer-events-none max-w-[520px] max-h-[520px]"
-            animate={{ rotate: 360 }}
-            transition={{ duration: 16, repeat: Infinity, ease: "linear" }}
-          >
-            <circle
-              cx="100"
-              cy="100"
-              r="96"
-              fill="none"
-              stroke="white"
-              strokeOpacity="0.08"
-              strokeWidth="0.5"
-            />
-            <motion.circle
-              cx="100"
-              cy="100"
-              r="96"
-              fill="none"
-              stroke="white"
-              strokeWidth="1"
-              strokeLinecap="round"
-              strokeDasharray={2 * Math.PI * 96}
-              animate={{
-                strokeDashoffset: 2 * Math.PI * 96 * (1 - progress / 100),
-              }}
-              transition={{ duration: 0.2, ease: "easeOut" }}
-              style={{ opacity: 0.9 }}
-            />
-          </motion.svg>
 
           {/* The counter itself */}
           <div className="relative flex items-baseline font-sans font-black tracking-tighter">
