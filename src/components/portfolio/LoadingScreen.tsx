@@ -2,6 +2,7 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
+import { BackgroundMeteors } from "@/components/portfolio/BackgroundMeteors";
 
 export function LoadingScreen() {
   const [show, setShow] = useState(true);
@@ -51,34 +52,9 @@ export function LoadingScreen() {
           transition={{ duration: 0.75, ease: [0.76, 0, 0.24, 1] }}
           className="fixed inset-0 z-[100] flex items-center justify-center bg-black text-white select-none overflow-hidden"
         >
-          {/* Aurora field — soft drifting blurred blobs */}
-          <div className="absolute inset-0 pointer-events-none">
-            <motion.div
-              className="absolute rounded-full blur-[110px]"
-              style={{
-                width: 480,
-                height: 480,
-                left: "10%",
-                top: "15%",
-                background:
-                  "radial-gradient(circle, rgba(124,58,237,0.4) 0%, rgba(124,58,237,0) 70%)",
-              }}
-              animate={{ x: [0, 50, -20, 0], y: [0, 30, -20, 0] }}
-              transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
-            />
-            <motion.div
-              className="absolute rounded-full blur-[110px]"
-              style={{
-                width: 420,
-                height: 420,
-                right: "8%",
-                top: "25%",
-                background:
-                  "radial-gradient(circle, rgba(34,211,238,0.3) 0%, rgba(34,211,238,0) 70%)",
-              }}
-              animate={{ x: [0, -40, 20, 0], y: [0, -20, 15, 0] }}
-              transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
-            />
+          {/* Drifting meteors background */}
+          <div className="absolute inset-0 pointer-events-none z-[1] overflow-hidden opacity-30">
+            <BackgroundMeteors number={15} />
           </div>
 
           {/* Grain texture overlay */}
@@ -94,7 +70,7 @@ export function LoadingScreen() {
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,transparent_30%,#000000_85%)] pointer-events-none" />
 
           {/* Centerpiece: Simple, glowing percentage count */}
-          <div className="relative flex flex-col items-center gap-6">
+          <div className="relative flex flex-col items-center gap-6 z-[2]">
             <div className="flex items-baseline font-sans font-extrabold tracking-tight text-[15vw] sm:text-[12vw] leading-none text-white drop-shadow-[0_0_30px_rgba(255,255,255,0.15)]">
               <span className="tabular-nums select-none bg-gradient-to-b from-white via-white to-neutral-400 bg-clip-text text-transparent">
                 {progress}
@@ -106,23 +82,6 @@ export function LoadingScreen() {
               >
                 %
               </motion.span>
-            </div>
-
-            {/* Glowing progress line */}
-            <div className="relative w-48 sm:w-60 h-[2px] rounded-full bg-white/10 overflow-hidden">
-              <motion.div
-                className="absolute inset-y-0 left-0 rounded-full"
-                style={{
-                  background: "linear-gradient(90deg, #7c3aed, #22d3ee)",
-                }}
-                animate={{ width: `${progress}%` }}
-                transition={{ duration: 0.1, ease: "easeOut" }}
-              />
-              <motion.div
-                className="absolute top-1/2 h-1.5 w-1.5 -translate-y-1/2 rounded-full bg-white shadow-[0_0_8px_2px_rgba(255,255,255,0.8)]"
-                animate={{ left: `calc(${progress}% - 3px)` }}
-                transition={{ duration: 0.1, ease: "easeOut" }}
-              />
             </div>
           </div>
 
