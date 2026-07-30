@@ -3,21 +3,30 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useMemo, useState } from "react";
 
-// Fixed seeds so particle layout is stable across renders, only randomized once per mount
-const PARTICLES = Array.from({ length: 18 }, (_, i) => ({
-  id: i,
-  left: Math.random() * 100,
-  size: Math.random() * 2 + 1,
-  duration: Math.random() * 6 + 6,
-  delay: Math.random() * 6,
-  drift: (Math.random() - 0.5) * 60,
-}));
+// One sliding column per digit — gives the counter a mechanical, odometer-style tick
+function DigitColumn({ digit }: { digit: string }) {
+  return (
+    <span className="relative inline-block h-[1em] w-[0.62em] overflow-hidden">
+      <AnimatePresence mode="popLayout">
+        <motion.span
+          key={digit}
+          initial={{ y: "70%", opacity: 0 }}
+          animate={{ y: "0%", opacity: 1 }}
+          exit={{ y: "-70%", opacity: 0 }}
+          transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+          className="absolute inset-0 flex items-center justify-center"
+        >
+          {digit}
+        </motion.span>
+      </AnimatePresence>
+    </span>
+  );
+}
 
 export function LoadingScreen() {
   const [show, setShow] = useState(true);
   const [mounted, setMounted] = useState(false);
   const [progress, setProgress] = useState(0);
-  const [glitchTick, setGlitchTick] = useState(0);
 
   useEffect(() => {
     setMounted(true);
@@ -29,7 +38,7 @@ export function LoadingScreen() {
     if (progress >= 100) {
       const exitTimer = setTimeout(() => {
         setShow(false);
-      }, 600); // hold at 100% before exit
+      }, 650); // hold at 100% before the wipe
       return () => clearTimeout(exitTimer);
     }
 
@@ -57,22 +66,7 @@ export function LoadingScreen() {
     return () => clearTimeout(timer);
   }, [progress, mounted]);
 
-  // Occasional CRT-style digit flicker
-  useEffect(() => {
-    if (!mounted || progress >= 100) return;
-    const interval = setInterval(() => {
-      if (Math.random() > 0.85) setGlitchTick((t) => t + 1);
-    }, 180);
-    return () => clearInterval(interval);
-  }, [mounted, progress]);
-
-  const displayValue = useMemo(() => {
-    if (glitchTick > 0 && progress > 0 && progress < 100) {
-      const jitter = Math.random() > 0.5 ? 1 : -1;
-      return Math.min(99, Math.max(0, progress + jitter));
-    }
-    return progress;
-  }, [progress, glitchTick]);
+  const digits = useMemo(() => String(progress).padStart(2, "0").split(""), [progress]);
 
   if (!mounted) return null;
 
@@ -80,112 +74,116 @@ export function LoadingScreen() {
     <AnimatePresence>
       {show && (
         <motion.div
-          initial={{ y: 0 }}
-          exit={{ y: "-100%" }}
+          initial={{ clipPath: "circle(150% at 50% 50%)" }}
+          exit={{ clipPath: "circle(0% at 50% 50%)" }}
           transition={{ duration: 0.9, ease: [0.76, 0, 0.24, 1] }}
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-[#030303] text-white select-none overflow-hidden"
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-[#07040f] text-white select-none overflow-hidden"
         >
-          {/* Ambient grid, slowly drifting */}
-          <motion.div
-            className="absolute inset-0 bg-grid opacity-[0.07] pointer-events-none"
-            animate={{ backgroundPosition: ["0px 0px", "40px 40px"] }}
-            transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
-          />
-
-          {/* Rising particle field — density and speed pick up as progress climbs */}
+          {/* Aurora field — three soft blurred blobs drifting past each other */}
           <div className="absolute inset-0 pointer-events-none">
-            {PARTICLES.map((p) => (
-              <motion.span
-                key={p.id}
-                className="absolute rounded-full bg-white"
-                style={{
-                  left: `${p.left}%`,
-                  bottom: "-5%",
-                  width: p.size,
-                  height: p.size,
-                }}
-                animate={{
-                  y: ["0vh", "-105vh"],
-                  x: [0, p.drift],
-                  opacity: [0, 0.5, 0],
-                }}
-                transition={{
-                  duration: progress >= 100 ? p.duration * 0.4 : p.duration,
-                  repeat: Infinity,
-                  delay: p.delay,
-                  ease: "linear",
-                }}
-              />
-            ))}
+            <motion.div
+              className="absolute rounded-full blur-[110px]"
+              style={{
+                width: 480,
+                height: 480,
+                left: "10%",
+                top: "15%",
+                background:
+                  "radial-gradient(circle, rgba(124,58,237,0.55) 0%, rgba(124,58,237,0) 70%)",
+              }}
+              animate={{ x: [0, 60, -20, 0], y: [0, 40, -30, 0] }}
+              transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
+            />
+            <motion.div
+              className="absolute rounded-full blur-[110px]"
+              style={{
+                width: 420,
+                height: 420,
+                right: "8%",
+                top: "25%",
+                background:
+                  "radial-gradient(circle, rgba(34,211,238,0.4) 0%, rgba(34,211,238,0) 70%)",
+              }}
+              animate={{ x: [0, -50, 30, 0], y: [0, -30, 20, 0] }}
+              transition={{ duration: 17, repeat: Infinity, ease: "easeInOut" }}
+            />
+            <motion.div
+              className="absolute rounded-full blur-[120px]"
+              style={{
+                width: 440,
+                height: 440,
+                left: "30%",
+                bottom: "5%",
+                background:
+                  "radial-gradient(circle, rgba(251,113,133,0.35) 0%, rgba(251,113,133,0) 70%)",
+              }}
+              animate={{ x: [0, 40, -40, 0], y: [0, -20, 30, 0] }}
+              transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
+            />
           </div>
 
-          {/* Scanline sweep */}
-          <motion.div
-            className="absolute inset-x-0 h-32 pointer-events-none bg-gradient-to-b from-transparent via-white/[0.05] to-transparent"
-            animate={{ top: ["-10%", "110%"] }}
-            transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
-          />
-
-          {/* CRT grain */}
+          {/* Fine grain for texture over the gradients */}
           <div
-            className="absolute inset-0 pointer-events-none opacity-[0.05] mix-blend-overlay"
+            className="absolute inset-0 pointer-events-none opacity-[0.04] mix-blend-overlay"
             style={{
               backgroundImage:
                 "repeating-linear-gradient(0deg, #fff 0px, transparent 1px, transparent 2px, #fff 3px)",
             }}
           />
 
-          {/* Radial vignette */}
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_35%,#000_92%)] pointer-events-none" />
+          {/* Vignette to keep focus centered */}
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,transparent_30%,#07040f_88%)] pointer-events-none" />
 
-          {/* Pulsing halo behind the counter, breathing with progress */}
-          <motion.div
-            className="absolute rounded-full bg-white blur-[120px] pointer-events-none"
-            style={{ width: 420, height: 420 }}
-            animate={{
-              opacity: progress >= 100 ? 0.18 : [0.03, 0.07, 0.03],
-              scale: progress >= 100 ? 1.15 : [1, 1.05, 1],
-            }}
-            transition={{
-              duration: progress >= 100 ? 0.6 : 3,
-              repeat: progress >= 100 ? 0 : Infinity,
-              ease: "easeInOut",
-            }}
-          />
-
-          {/* The counter itself */}
-          <div className="relative flex items-baseline font-sans font-black tracking-tighter">
-            <motion.span
-              key={displayValue}
-              initial={{ opacity: 0.4, filter: "blur(3px)", y: 4 }}
-              animate={{ opacity: 1, filter: "blur(0px)", y: 0 }}
-              transition={{ duration: 0.15 }}
-              className="text-[20vw] leading-none tabular-nums font-extrabold bg-gradient-to-b from-white to-neutral-400 bg-clip-text text-transparent"
+          {/* Centerpiece: counter + progress arc */}
+          <div className="relative flex flex-col items-center gap-10">
+            <div
+              className="flex items-baseline font-sans font-bold tracking-tight text-[16vw] leading-none"
               style={{
-                textShadow:
-                  progress >= 100
-                    ? "0 0 60px rgba(255,255,255,0.45)"
-                    : "0 0 30px rgba(255,255,255,0.08)",
+                backgroundImage:
+                  "linear-gradient(180deg, #ffffff 0%, #c9c0ff 55%, #8b7bff 100%)",
+                WebkitBackgroundClip: "text",
+                backgroundClip: "text",
+                color: "transparent",
               }}
             >
-              {displayValue}
-            </motion.span>
-            <motion.span
-              animate={{ opacity: [0.5, 0.2, 0.5] }}
-              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-              className="text-[6.5vw] font-light leading-none text-neutral-400 ml-1"
-            >
-              %
-            </motion.span>
+              {digits.map((d, i) => (
+                <DigitColumn digit={d} key={i} />
+              ))}
+              <motion.span
+                animate={{ opacity: [0.55, 0.25, 0.55] }}
+                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                className="text-[5.5vw] font-light ml-2 text-violet-200/70"
+              >
+                %
+              </motion.span>
+            </div>
+
+            {/* Slim gradient progress bar with a soft glowing leader */}
+            <div className="relative w-56 sm:w-72 h-[3px] rounded-full bg-white/10 overflow-hidden">
+              <motion.div
+                className="absolute inset-y-0 left-0 rounded-full"
+                style={{
+                  background:
+                    "linear-gradient(90deg, #7c3aed, #22d3ee)",
+                }}
+                animate={{ width: `${progress}%` }}
+                transition={{ duration: 0.15, ease: "easeOut" }}
+              />
+              <motion.div
+                className="absolute top-1/2 h-2 w-2 -translate-y-1/2 rounded-full bg-white shadow-[0_0_10px_3px_rgba(255,255,255,0.7)]"
+                animate={{ left: `calc(${progress}% - 4px)` }}
+                transition={{ duration: 0.15, ease: "easeOut" }}
+              />
+            </div>
           </div>
 
-          {/* Flash-wipe beat right before exit */}
+          {/* Radial pulse ping right as it completes */}
           {progress >= 100 && (
             <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: [0, 0.65, 0] }}
-              transition={{ duration: 0.45, delay: 0.35 }}
-              className="absolute inset-0 bg-white pointer-events-none"
+              initial={{ opacity: 0.5, scale: 0 }}
+              animate={{ opacity: 0, scale: 8 }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
+              className="absolute h-4 w-4 rounded-full border border-white/60 pointer-events-none"
             />
           )}
         </motion.div>
