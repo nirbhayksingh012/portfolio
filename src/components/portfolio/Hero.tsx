@@ -178,7 +178,7 @@ export function Hero() {
   useGSAPAnimations(() => {
     const tl = gsap.timeline({
       defaults: { ease: "power4.out" },
-      delay: 1, // wait for loading screen
+      delay: 2.2, // wait for loading screen to complete count and begin slide-up curtain exit
     });
 
     // 1. Name — split into characters, fly in from bottom with blur
