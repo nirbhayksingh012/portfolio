@@ -42,25 +42,21 @@ export function LoadingScreen() {
       return () => clearTimeout(exitTimer);
     }
 
+    // Always step by 1 so the count reads cleanly: 1, 2, 3 ... 100
     let delay = 30;
-    let step = 1;
 
     if (progress < 25) {
-      step = Math.floor(Math.random() * 3) + 2;
       delay = Math.floor(Math.random() * 20) + 15;
     } else if (progress < 65) {
-      step = Math.random() > 0.55 ? 1 : 2;
       delay = Math.floor(Math.random() * 40) + 40;
     } else if (progress < 90) {
-      step = Math.floor(Math.random() * 2) + 2;
       delay = Math.floor(Math.random() * 25) + 20;
     } else {
-      step = 1;
       delay = Math.floor(Math.random() * 30) + 60;
     }
 
     const timer = setTimeout(() => {
-      setProgress((prev) => Math.min(prev + step, 100));
+      setProgress((prev) => Math.min(prev + 1, 100));
     }, delay);
 
     return () => clearTimeout(timer);
@@ -77,7 +73,7 @@ export function LoadingScreen() {
           initial={{ clipPath: "circle(150% at 50% 50%)" }}
           exit={{ clipPath: "circle(0% at 50% 50%)" }}
           transition={{ duration: 0.9, ease: [0.76, 0, 0.24, 1] }}
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-[#07040f] text-white select-none overflow-hidden"
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black text-white select-none overflow-hidden"
         >
           {/* Aurora field — three soft blurred blobs drifting past each other */}
           <div className="absolute inset-0 pointer-events-none">
@@ -132,27 +128,18 @@ export function LoadingScreen() {
           />
 
           {/* Vignette to keep focus centered */}
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,transparent_30%,#07040f_88%)] pointer-events-none" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,transparent_30%,#000000_88%)] pointer-events-none" />
 
           {/* Centerpiece: counter + progress arc */}
           <div className="relative flex flex-col items-center gap-10">
-            <div
-              className="flex items-baseline font-sans font-bold tracking-tight text-[16vw] leading-none"
-              style={{
-                backgroundImage:
-                  "linear-gradient(180deg, #ffffff 0%, #c9c0ff 55%, #8b7bff 100%)",
-                WebkitBackgroundClip: "text",
-                backgroundClip: "text",
-                color: "transparent",
-              }}
-            >
+            <div className="flex items-baseline font-sans font-bold tracking-tight text-[16vw] leading-none text-white">
               {digits.map((d, i) => (
                 <DigitColumn digit={d} key={i} />
               ))}
               <motion.span
                 animate={{ opacity: [0.55, 0.25, 0.55] }}
                 transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                className="text-[5.5vw] font-light ml-2 text-violet-200/70"
+                className="text-[5.5vw] font-light ml-2 text-white/60"
               >
                 %
               </motion.span>
