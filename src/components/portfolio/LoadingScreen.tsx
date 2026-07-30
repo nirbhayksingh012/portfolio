@@ -1,27 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { useEffect, useMemo, useState } from "react";
-
-// One sliding column per digit — gives the counter a mechanical, odometer-style tick
-function DigitColumn({ digit }: { digit: string }) {
-  return (
-    <span className="relative inline-block h-[1em] w-[0.62em] overflow-hidden">
-      <AnimatePresence mode="popLayout">
-        <motion.span
-          key={digit}
-          initial={{ y: "70%", opacity: 0 }}
-          animate={{ y: "0%", opacity: 1 }}
-          exit={{ y: "-70%", opacity: 0 }}
-          transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
-          className="absolute inset-0 flex items-center justify-center"
-        >
-          {digit}
-        </motion.span>
-      </AnimatePresence>
-    </span>
-  );
-}
+import { useEffect, useState } from "react";
 
 export function LoadingScreen() {
   const [show, setShow] = useState(true);
@@ -32,37 +12,33 @@ export function LoadingScreen() {
     setMounted(true);
   }, []);
 
-  // Organic loading curve
+  // Extremely fast, organic loading curve (~800ms - 1s total)
   useEffect(() => {
     if (!mounted) return;
     if (progress >= 100) {
       const exitTimer = setTimeout(() => {
         setShow(false);
-      }, 650); // hold at 100% before the wipe
+      }, 150); // Snappy hold at 100%
       return () => clearTimeout(exitTimer);
     }
 
-    // Always step by 1 so the count reads cleanly: 1, 2, 3 ... 100
-    let delay = 30;
+    let delay = 15;
+    let step = 1;
 
-    if (progress < 25) {
-      delay = Math.floor(Math.random() * 20) + 15;
-    } else if (progress < 65) {
-      delay = Math.floor(Math.random() * 40) + 40;
-    } else if (progress < 90) {
-      delay = Math.floor(Math.random() * 25) + 20;
+    if (progress < 85) {
+      step = Math.floor(Math.random() * 3) + 2; // Increments of 2-4%
+      delay = Math.floor(Math.random() * 10) + 12; // 12-22ms delay
     } else {
-      delay = Math.floor(Math.random() * 30) + 60;
+      step = Math.random() > 0.4 ? 1 : 2; // Increments of 1-2% near completion
+      delay = Math.floor(Math.random() * 20) + 15; // 15-35ms delay
     }
 
     const timer = setTimeout(() => {
-      setProgress((prev) => Math.min(prev + 1, 100));
+      setProgress((prev) => Math.min(prev + step, 100));
     }, delay);
 
     return () => clearTimeout(timer);
   }, [progress, mounted]);
-
-  const digits = useMemo(() => String(progress).padStart(2, "0").split(""), [progress]);
 
   if (!mounted) return null;
 
@@ -72,10 +48,10 @@ export function LoadingScreen() {
         <motion.div
           initial={{ clipPath: "circle(150% at 50% 50%)" }}
           exit={{ clipPath: "circle(0% at 50% 50%)" }}
-          transition={{ duration: 0.9, ease: [0.76, 0, 0.24, 1] }}
+          transition={{ duration: 0.75, ease: [0.76, 0, 0.24, 1] }}
           className="fixed inset-0 z-[100] flex items-center justify-center bg-black text-white select-none overflow-hidden"
         >
-          {/* Aurora field — three soft blurred blobs drifting past each other */}
+          {/* Aurora field — soft drifting blurred blobs */}
           <div className="absolute inset-0 pointer-events-none">
             <motion.div
               className="absolute rounded-full blur-[110px]"
@@ -85,10 +61,10 @@ export function LoadingScreen() {
                 left: "10%",
                 top: "15%",
                 background:
-                  "radial-gradient(circle, rgba(124,58,237,0.55) 0%, rgba(124,58,237,0) 70%)",
+                  "radial-gradient(circle, rgba(124,58,237,0.4) 0%, rgba(124,58,237,0) 70%)",
               }}
-              animate={{ x: [0, 60, -20, 0], y: [0, 40, -30, 0] }}
-              transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
+              animate={{ x: [0, 50, -20, 0], y: [0, 30, -20, 0] }}
+              transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
             />
             <motion.div
               className="absolute rounded-full blur-[110px]"
@@ -98,79 +74,65 @@ export function LoadingScreen() {
                 right: "8%",
                 top: "25%",
                 background:
-                  "radial-gradient(circle, rgba(34,211,238,0.4) 0%, rgba(34,211,238,0) 70%)",
+                  "radial-gradient(circle, rgba(34,211,238,0.3) 0%, rgba(34,211,238,0) 70%)",
               }}
-              animate={{ x: [0, -50, 30, 0], y: [0, -30, 20, 0] }}
-              transition={{ duration: 17, repeat: Infinity, ease: "easeInOut" }}
-            />
-            <motion.div
-              className="absolute rounded-full blur-[120px]"
-              style={{
-                width: 440,
-                height: 440,
-                left: "30%",
-                bottom: "5%",
-                background:
-                  "radial-gradient(circle, rgba(251,113,133,0.35) 0%, rgba(251,113,133,0) 70%)",
-              }}
-              animate={{ x: [0, 40, -40, 0], y: [0, -20, 30, 0] }}
-              transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
+              animate={{ x: [0, -40, 20, 0], y: [0, -20, 15, 0] }}
+              transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
             />
           </div>
 
-          {/* Fine grain for texture over the gradients */}
+          {/* Grain texture overlay */}
           <div
-            className="absolute inset-0 pointer-events-none opacity-[0.04] mix-blend-overlay"
+            className="absolute inset-0 pointer-events-none opacity-[0.03] mix-blend-overlay"
             style={{
               backgroundImage:
                 "repeating-linear-gradient(0deg, #fff 0px, transparent 1px, transparent 2px, #fff 3px)",
             }}
           />
 
-          {/* Vignette to keep focus centered */}
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,transparent_30%,#000000_88%)] pointer-events-none" />
+          {/* Vignette */}
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,transparent_30%,#000000_85%)] pointer-events-none" />
 
-          {/* Centerpiece: counter + progress arc */}
-          <div className="relative flex flex-col items-center gap-10">
-            <div className="flex items-baseline font-sans font-bold tracking-tight text-[16vw] leading-none text-white">
-              {digits.map((d, i) => (
-                <DigitColumn digit={d} key={i} />
-              ))}
+          {/* Centerpiece: Simple, glowing percentage count */}
+          <div className="relative flex flex-col items-center gap-6">
+            <div className="flex items-baseline font-sans font-extrabold tracking-tight text-[15vw] sm:text-[12vw] leading-none text-white drop-shadow-[0_0_30px_rgba(255,255,255,0.15)]">
+              <span className="tabular-nums select-none bg-gradient-to-b from-white via-white to-neutral-400 bg-clip-text text-transparent">
+                {progress}
+              </span>
               <motion.span
-                animate={{ opacity: [0.55, 0.25, 0.55] }}
-                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                className="text-[5.5vw] font-light ml-2 text-white/60"
+                animate={{ opacity: [0.6, 0.3, 0.6] }}
+                transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+                className="text-[5vw] sm:text-[4vw] font-light ml-2 text-white/50"
               >
                 %
               </motion.span>
             </div>
 
-            {/* Slim gradient progress bar with a soft glowing leader */}
-            <div className="relative w-56 sm:w-72 h-[3px] rounded-full bg-white/10 overflow-hidden">
+            {/* Glowing progress line */}
+            <div className="relative w-48 sm:w-60 h-[2px] rounded-full bg-white/10 overflow-hidden">
               <motion.div
                 className="absolute inset-y-0 left-0 rounded-full"
                 style={{
-                  background:
-                    "linear-gradient(90deg, #7c3aed, #22d3ee)",
+                  background: "linear-gradient(90deg, #7c3aed, #22d3ee)",
                 }}
                 animate={{ width: `${progress}%` }}
-                transition={{ duration: 0.15, ease: "easeOut" }}
+                transition={{ duration: 0.1, ease: "easeOut" }}
               />
               <motion.div
-                className="absolute top-1/2 h-2 w-2 -translate-y-1/2 rounded-full bg-white shadow-[0_0_10px_3px_rgba(255,255,255,0.7)]"
-                animate={{ left: `calc(${progress}% - 4px)` }}
-                transition={{ duration: 0.15, ease: "easeOut" }}
+                className="absolute top-1/2 h-1.5 w-1.5 -translate-y-1/2 rounded-full bg-white shadow-[0_0_8px_2px_rgba(255,255,255,0.8)]"
+                animate={{ left: `calc(${progress}% - 3px)` }}
+                transition={{ duration: 0.1, ease: "easeOut" }}
               />
             </div>
           </div>
 
-          {/* Radial pulse ping right as it completes */}
+          {/* Radial pulse ping on completion */}
           {progress >= 100 && (
             <motion.div
-              initial={{ opacity: 0.5, scale: 0 }}
-              animate={{ opacity: 0, scale: 8 }}
-              transition={{ duration: 0.8, ease: "easeOut" }}
-              className="absolute h-4 w-4 rounded-full border border-white/60 pointer-events-none"
+              initial={{ opacity: 0.4, scale: 0 }}
+              animate={{ opacity: 0, scale: 6 }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+              className="absolute h-4 w-4 rounded-full border border-white/40 pointer-events-none"
             />
           )}
         </motion.div>
