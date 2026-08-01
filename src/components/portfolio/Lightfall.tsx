@@ -41,11 +41,9 @@ void main() {
 
 const fragment = `
 precision highp float;
-
 uniform vec3  iResolution;
 uniform vec2  iMouse;
 uniform float iTime;
-
 uniform vec3  uColor0;
 uniform vec3  uColor1;
 uniform vec3  uColor2;
